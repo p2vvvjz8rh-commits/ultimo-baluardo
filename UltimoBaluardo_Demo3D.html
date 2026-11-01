@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"/><meta name="theme-color" content="#09151d"/><title>Ultimo Baluardo — Demo 3D</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#081116;color:#e8f0e8;font-family:system-ui,-apple-system,Arial,sans-serif}#stage{position:fixed;inset:0;display:flex;justify-content:center;align-items:center;background:radial-gradient(ellipse at center,#243439 0%,#08131a 68%,#030608 100%)}#game{position:relative;width:min(100vw,calc(100dvh * .60));height:min(100dvh,calc(100vw / .60));max-height:100dvh;overflow:hidden;background:#18242b;border:1px solid #40565a;box-shadow:0 8px 60px #0008}#renderCanvas{display:block;width:100%;height:100%;touch-action:none;outline:0}#shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.35),transparent 15%,transparent 75%,rgba(0,0,0,.38))}#top{position:absolute;top:max(12px,env(safe-area-inset-top));left:12px;right:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;pointer-events:none}.brand{font-size:13px;font-weight:900;letter-spacing:.10em;text-shadow:0 2px 8px #000}.sub{font-size:10px;color:#bfcfca;letter-spacing:.08em;margin-top:3px}.pill{border:1px solid #dbbc824c;background:#0c1e27df;color:#efd6a6;padding:7px 10px;border-radius:9px;font-size:10px;font-weight:800}#pause{pointer-events:auto;cursor:pointer;width:38px;height:38px;border:1px solid #b69c6e;border-radius:10px;background:#11252de8;color:#f2dfb9;font-size:19px}#controls{position:absolute;left:10px;right:10px;bottom:max(12px,env(safe-area-inset-bottom));padding:12px;border:1px solid #899c9766;background:#08171ee8;backdrop-filter:blur(10px);border-radius:14px;box-shadow:0 6px 22px #0009}#controls .line{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;font-weight:700}#controls input{width:100%;accent-color:#e4bf82;margin:10px 0 2px}#controls small{font-size:10px;color:#aac0b9}.preset{display:flex;gap:5px;margin-top:10px}.preset button{flex:1;padding:8px 2px;background:#1c3038;border:1px solid #4c676d;color:#c9d8d4;font-weight:700;font-size:10px;border-radius:7px}.preset button.selected{background:#e2ba77;color:#16232a;border-color:#e6ca95}#loading{position:absolute;inset:0;z-index:8;background:#08151b;display:flex;align-items:center;justify-content:center;padding:26px;text-align:center;line-height:1.5;font-size:14px}#loading strong{display:block;color:#ecd2a5;margin-bottom:9px;font-size:21px}#loading button{margin-top:12px;border:1px solid #b89b66;background:#e7be7d;border-radius:8px;padding:9px 15px;font-weight:800;color:#15232b}#tip{position:absolute;left:0;right:0;top:105px;font-size:11px;color:#d7e7d6;text-align:center;text-shadow:0 2px 6px #000;pointer-events:none;animation:fade 7s forwards}@keyframes fade{0%,65%{opacity:1}100%{opacity:0}}#footer{position:absolute;left:0;right:0;bottom:118px;text-align:center;font-size:10px;color:#e9e6ceaa;pointer-events:none;text-shadow:0 1px 4px #000}@media(max-height:700px){#controls{padding:8px}#footer{bottom:100px}#tip{top:79px}}@media(min-width:768px){#game{border-radius:14px}}
+</style>
+</head><body><main id="stage"><div id="game"><canvas id="renderCanvas" aria-label="Demo grafica tridimensionale di Ultimo Baluardo"></canvas><div id="shade"></div><div id="top"><div><div class="brand">ULTIMO BALUARDO <span style="color:#e7c27e">3D</span></div><div class="sub">PROTOTIPO GRAFICO · NON È ANCORA IL GIOCO</div></div><div class="pill">3 SOLDATI</div><button id="pause" title="Pausa" aria-label="Pausa">Ⅱ</button></div><div id="tip">Trascina sulla strada per spostare la squadra</div><div id="footer">Soldati · Zombie · Barili · Telecamera regolabile</div><section id="controls"><div class="line"><label for="height">ALTEZZA TELECAMERA</label><output id="heightValue">12</output></div><input id="height" type="range" min="6" max="20" step="1" value="12"/><div class="line"><small>Più bassa: vista dalle spalle</small><small>Più alta: vista dall'alto</small></div><div class="preset"><button type="button" data-h="7">BASSA</button><button type="button" data-h="12" class="selected">MEDIA</button><button type="button" data-h="18">ALTA</button></div></section><div id="loading"><div><strong>ULTIMO BALUARDO 3D</strong><span id="loadingText">Caricamento del motore tridimensionale…</span><div id="loadingAction"></div></div></div></div></main>
+<script>
+(function(){
+  var loaded=false;
+  function fail(){if(loaded)return;document.getElementById('loadingText').textContent='Il motore 3D non è stato caricato. Controlla la connessione Internet e riprova in Safari.';document.getElementById('loadingAction').innerHTML='<button type="button" onclick="location.reload()">RIPROVA</button>';}
+  function load(url, next){var s=document.createElement('script');s.src=url;s.onload=function(){if(window.BABYLON){loaded=true;start()}else next()};s.onerror=next;document.head.appendChild(s)}
+  load('https://cdn.babylonjs.com/babylon.js',function(){load('https://cdn.jsdelivr.net/npm/babylonjs@9.33.1/babylon.js',fail)});
+  function start(){
+    var B=window.BABYLON,canvas=document.getElementById('renderCanvas'),engine;
+    try{engine=new B.Engine(canvas,true,{preserveDrawingBuffer:false,stencil:false,powerPreference:'high-performance'});}catch(err){document.getElementById('loadingText').textContent='Questo browser non riesce ad avviare WebGL: '+err.message;return}
+    engine.setHardwareScalingLevel(Math.max(1,Math.min(1.8,window.devicePixelRatio||1)/1.5));
+    var scene=new B.Scene(engine);scene.clearColor=new B.Color4(.055,.086,.103,1);scene.fogMode=B.Scene.FOGMODE_EXP2;scene.fogDensity=.009;scene.fogColor=new B.Color3(.13,.175,.19);
+    var camera=new B.FreeCamera('camera',new B.Vector3(0,12,-18),scene);camera.setTarget(new B.Vector3(0,1.3,21));camera.fov=.88;camera.minZ=.1;camera.maxZ=150;
+    new B.HemisphericLight('ambient',new B.Vector3(.25,1,.4),scene).intensity=.75;
+    var moon=new B.DirectionalLight('moon',new B.Vector3(-.35,-1,.5),scene);moon.intensity=1.05;moon.diffuse=new B.Color3(.72,.85,.90);
+    var warm=new B.PointLight('warm',new B.Vector3(-7,4,15),scene);warm.diffuse=new B.Color3(1,.63,.36);warm.intensity=36;warm.range=40;
+    function mat(name,hex,em){var m=new B.StandardMaterial(name,scene);m.diffuseColor=B.Color3.FromHexString(hex);m.specularColor=new B.Color3(.08,.09,.1);if(em)m.emissiveColor=B.Color3.FromHexString(em);return m}
+    var M={road:mat('asphalt','#303638'),side:mat('sidewalk','#212c30'),mark:mat('road lines','#b59b63'),edge:mat('edge','#58635b'),wall:mat('concrete','#29343a'),rust:mat('rust','#7e4d37'),metal:mat('steel','#5e7072'),black:mat('black','#12191b'),boots:mat('boots','#1d231f'),skin:mat('skin','#ae8b75'),uniform:mat('uniform','#526b57'),vest:mat('armor','#2c3935'),helmet:mat('helmet','#678575'),visor:mat('visor','#152d30','#10272b'),zSkin:mat('zombie skin','#7f9980'),zCloth:mat('zombie clothes','#615b4a'),zDark:mat('zombie dark','#3f524b'),eyes:mat('infected eyes','#ee7865','#af2617'),armor:mat('riot armor','#4f5963'),boss:mat('boss','#805444'),barrel:mat('barrel red','#ad3d32'),barrelDark:mat('barrel dark','#652c25'),gold:mat('brass','#dbb66e','#805827'),flash:mat('flash','#fff0b6','#ffd179')};
+    function box(name,w,h,d,x,y,z,material,parent){var m=B.MeshBuilder.CreateBox(name,{width:w,height:h,depth:d},scene);m.position.set(x,y,z);m.material=material;if(parent)m.parent=parent;return m}
+    function sphere(name,diam,x,y,z,material,parent,segments){var m=B.MeshBuilder.CreateSphere(name,{diameter:diam,segments:segments||8},scene);m.position.set(x,y,z);m.material=material;if(parent)m.parent=parent;return m}
+    function cyl(name,r1,r2,h,x,y,z,material,parent){var m=B.MeshBuilder.CreateCylinder(name,{height:h,diameterTop:r1*2,diameterBottom:r2*2,tessellation:12},scene);m.position.set(x,y,z);m.material=material;if(parent)m.parent=parent;return m}
+    box('road surface',15,.16,180,0,-.13,50,M.road);
+    for(var side of [-1,1]){
+      box('sidewalk',5,.24,180,side*10,0,50,M.side);
+      box('curb',.2,.31,180,side*7.65,.10,50,M.edge);
+      for(var k=0;k<19;k++){var z=-8+k*8.5,seed=(k*31+side*7);
+        var building=box('ruined building',3+((k*7)%3),2+(k%4)*1.35,5.5,side*(10.2+(k%2)*1.25),1+(k%4)*.65,z,M.wall);
+        var roof=box('roof trim',3.3+(k*7%3),.12,5.8,building.position.x,building.position.y+(2+(k%4)*1.35)/2,z,M.metal);
+        if(k%3===0)box('debris',.8,.25,.9,side*8.5,.10,z+2,M.rust);
+      }
+    }
+    var lines=[];for(var i=0;i<35;i++)for(var lane of [-2.8,2.8])lines.push(box('lane dash',.13,.025,2.2,lane,.005,i*5-10,M.mark));
+    var trail=[];for(i=0;i<18;i++)trail.push(box('cracked patch',.18,.018,1.4,(i*23%110)/10-5.5,.008,i*8-10,M.black));
+    function character(name,isZombie,kind){
+      var root=new B.TransformNode(name,scene);var scale=isZombie?(kind==='armored'?1.25:kind==='runner'?.94:1.07):1;
+      root.scaling.setAll(scale);
+      var cloth=isZombie?(kind==='armored'?M.armor:kind==='runner'?M.zDark:M.zCloth):M.uniform;
+      var skin=isZombie?M.zSkin:M.skin;
+      var body=box('torso',.85,1.05,.5,0,1.68,0,cloth,root);
+      box('vest',.72,.76,.19,0,1.7,isZombie?-.16:.27,isZombie?cloth:M.vest,root);
+      box('belt',.88,.18,.53,0,1.13,0,M.black,root);
+      var head=sphere('head',.58,0,2.47,.05,skin,root,10);
+      if(!isZombie){
+        var helm=sphere('military helmet',.72,0,2.63,.02,M.helmet,root,12);helm.scaling.y=.64;
+        box('helmet rim',.67,.11,.64,0,2.49,-.03,M.vest,root);
+        box('radio',.17,.28,.18,.53,1.99,0,M.black,root);
+        box('backpack',.64,.72,.28,0,1.72,-.38,M.vest,root);
+        box('backpack stripe',.4,.09,.29,0,1.61,-.52,M.helmet,root);
+      }else{
+        sphere('red eye left',.095,-.13,2.51,.28,M.eyes,root,6);
+        sphere('red eye right',.095,.13,2.51,.28,M.eyes,root,6);
+        if(kind==='armored'){box('riot chest',.94,.73,.25,0,1.72,.37,M.armor,root);box('riot helmet',.7,.32,.67,0,2.7,0,M.armor,root)}
+      }
+      var limbs=[];
+      for(var sign of [-1,1]){
+        var leg=new B.TransformNode('leg joint',scene);leg.parent=root;leg.position.set(sign*.24,1.08,0);
+        cyl('leg',.18,.16,.89,0,-.45,0,cloth,leg);
+        box('boot',.33,.22,.52,0,-.9,-.14,M.boots,leg);limbs.push(leg);
+        var arm=new B.TransformNode('arm joint',scene);arm.parent=root;arm.position.set(sign*.55,2.06,0);
+        cyl('sleeve',.17,.14,.72,sign*.07,-.36,-.07,cloth,arm);
+        sphere('hand',.24,sign*.1,-.74,-.11,skin,arm,7);limbs.push(arm);
+        if(!isZombie)box('shoulder pad',.34,.3,.48,sign*.55,2.0,0,M.vest,root);
+      }
+      if(!isZombie){
+        box('rifle body',.18,.15,1.45,.1,1.82,.75,M.black,root);
+        box('rifle receiver',.25,.24,.50,.1,1.82,.26,M.metal,root);
+        box('rifle sight',.07,.14,.25,.1,2.01,.37,M.black,root);
+        box('rifle magazine',.20,.42,.25,.1,1.54,.4,M.black,root);
+        box('rifle stock',.27,.22,.38,.1,1.77,-.16,M.boots,root);
+      }else{
+        body.rotation.z=kind==='runner'?.16:.08;
+        if(kind==='armored')box('metal shoulder plate',1.22,.27,.66,0,2.13,0,M.armor,root);
+      }
+      return {root:root,limbs:limbs,phase:Math.random()*6.28,kind:kind};
+    }
+    var soldiers=[];for(i=0;i<3;i++){var ch=character('Soldato '+(i+1),false);ch.root.position.set((i-1)*1.5,0,0);soldiers.push(ch)}
+    var squad=new B.TransformNode('squad',scene);soldiers.forEach(function(s){s.root.parent=squad});squad.position.z=2;
+    var enemies=[];var lanes=[-4.2,-1.2,2,4.5];for(i=0;i<9;i++){var kind=i%4===0?'runner':i%4===1?'armored':'normal',z=24+i*8+Math.random()*2,ch=character('Zombie '+(i+1),true,kind);ch.root.position.set(lanes[i%lanes.length]+(i%3-1)*.35,0,z);ch.root.rotation.y=Math.PI;enemies.push({ch:ch,z:z,lane:ch.root.position.x,speed:kind==='runner'?4.1:kind==='armored'?1.6:2.3})}
+    var barrels=[];function barrel(x,z){var parent=new B.TransformNode('barile',scene);parent.position.set(x,0,z);cyl('red metal barrel',.53,.53,1.12,0,.61,0,M.barrel,parent);for(var y of [.22,.63,1.04])cyl('barrel hoop',.56,.56,.09,0,y,0,M.barrelDark,parent);cyl('top lid',.47,.47,.04,0,1.18,0,M.metal,parent);box('warning stripe',.88,.20,.05,0,.74,-.48,M.gold,parent);return parent}
+    barrels.push(barrel(-3.2,20),barrel(3.4,36),barrel(-2.6,52));
+    var barricades=[];for(i=0;i<4;i++){var x=[-5.2,5.1,-4.9,5.2][i],z=28+i*19;var barricade=box('concrete roadblock',1.8,.9,.65,x,.45,z,M.metal);box('orange stripe',1.74,.16,.04,x,.62,z-.35,M.rust);barricades.push(barricade)}
+    var shots=[];for(i=0;i<3;i++){var shot=box('muzzle flash',.08,.08,.85,0,1.85,0,M.flash);shot.isVisible=false;shots.push(shot)}
+    var hInput=document.getElementById('height'),hValue=document.getElementById('heightValue');function setHeight(v){v=Number(v);hInput.value=v;hValue.textContent=v;camera.position.set(0,v,-17.5+(12-v)*.25);camera.setTarget(new B.Vector3(0,1.2,20));document.querySelectorAll('.preset button').forEach(function(b){b.classList.toggle('selected',Number(b.dataset.h)===v)})};setHeight(12);
+    hInput.addEventListener('input',function(){setHeight(this.value)});document.querySelectorAll('.preset button').forEach(function(btn){btn.addEventListener('click',function(){setHeight(btn.dataset.h)})});
+    var dragging=false,targetX=0;
+    function moveFromPointer(e){var r=canvas.getBoundingClientRect(),f=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width));targetX=(f-.5)*11.6}
+    canvas.addEventListener('pointerdown',function(e){dragging=true;try{canvas.setPointerCapture(e.pointerId)}catch(_){ }moveFromPointer(e)});
+    canvas.addEventListener('pointermove',function(e){if(dragging)moveFromPointer(e)});
+    canvas.addEventListener('pointerup',function(){dragging=false});canvas.addEventListener('pointercancel',function(){dragging=false});
+    var paused=false;document.getElementById('pause').addEventListener('click',function(){paused=!paused;this.textContent=paused?'▶':'Ⅱ';this.setAttribute('aria-label',paused?'Riprendi':'Pausa')});document.addEventListener('visibilitychange',function(){if(document.hidden){paused=true;document.getElementById('pause').textContent='▶'}});
+    var elapsed=0;scene.onBeforeRenderObservable.add(function(){if(paused)return;var dt=Math.min(.04,engine.getDeltaTime()/1000);elapsed+=dt;
+      squad.position.x+=(targetX-squad.position.x)*Math.min(1,dt*8);
+      soldiers.forEach(function(c,i){c.root.position.y=.025*Math.sin(elapsed*8+i);c.limbs[0].rotation.x=Math.sin(elapsed*8+i)*.18;c.limbs[2].rotation.x=-Math.sin(elapsed*8+i)*.18});
+      enemies.forEach(function(en,i){en.z-=en.speed*dt;if(en.z<5)en.z=68+Math.random()*28;en.ch.root.position.z=en.z;en.ch.root.position.x=en.lane+Math.sin(elapsed*.7+i)*.45;en.ch.root.position.y=Math.abs(Math.sin(elapsed*(en.speed*1.9)+en.ch.phase))*.08;en.ch.limbs[0].rotation.x=Math.sin(elapsed*en.speed*2+en.ch.phase)*.43;en.ch.limbs[2].rotation.x=-Math.sin(elapsed*en.speed*2+en.ch.phase)*.43;});
+      lines.forEach(function(l){l.position.z-=dt*7;if(l.position.z< -12)l.position.z+=175});
+      barrels.forEach(function(b){b.position.z-=dt*1.2;if(b.position.z<4)b.position.z=58+Math.random()*42});
+      barricades.forEach(function(b){b.position.z-=dt*1.2;if(b.position.z<3)b.position.z=73+Math.random()*35});
+      for(i=0;i<3;i++){var shoot=(elapsed*3+i*.46)%1.4<.10,shot=shots[i];shot.isVisible=shoot;shot.position.x=squad.position.x+(i-1)*1.5+.1;shot.position.z=squad.position.z+1.8;shot.position.y=1.81;shot.scaling.z=shoot?1:0.1}
+    });
+    var loading=document.getElementById('loading');loading.style.display='none';engine.runRenderLoop(function(){scene.render()});window.addEventListener('resize',function(){engine.resize()});setTimeout(function(){engine.resize()},100);
+  }
+})();
+</script></body></html>
