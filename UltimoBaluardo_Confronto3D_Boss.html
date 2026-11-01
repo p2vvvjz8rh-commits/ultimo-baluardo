@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"/><meta name="theme-color" content="#09151d"/><title>Ultimo Baluardo — Demo 3D · Stile intermedio e boss</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#081116;color:#e8f0e8;font-family:system-ui,-apple-system,Arial,sans-serif}#stage{position:fixed;inset:0;display:flex;justify-content:center;align-items:center;background:radial-gradient(ellipse at center,#263234 0%,#10191c 68%,#060b0d 100%)}#game{position:relative;width:min(100vw,calc(100dvh * .60));height:min(100dvh,calc(100vw / .60));max-height:100dvh;overflow:hidden;background:#18242b;border:1px solid #40565a;box-shadow:0 8px 60px #0008}#renderCanvas{display:block;width:100%;height:100%;touch-action:none;outline:0}#shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.18),transparent 22%,transparent 77%,rgba(0,0,0,.20))}#top{position:absolute;top:max(12px,env(safe-area-inset-top));left:12px;right:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;pointer-events:none}.brand{font-size:13px;font-weight:900;letter-spacing:.10em;text-shadow:0 2px 8px #000}.sub{font-size:10px;color:#bfcfca;letter-spacing:.08em;margin-top:3px}.pill{border:1px solid #dbbc824c;background:#0c1e27df;color:#efd6a6;padding:7px 10px;border-radius:9px;font-size:10px;font-weight:800}#pause{pointer-events:auto;cursor:pointer;width:38px;height:38px;border:1px solid #b69c6e;border-radius:10px;background:#11252de8;color:#f2dfb9;font-size:19px}#controls{position:absolute;left:10px;right:10px;bottom:max(12px,env(safe-area-inset-bottom));padding:12px;border:1px solid #899c9766;background:#08171ee8;backdrop-filter:blur(10px);border-radius:14px;box-shadow:0 6px 22px #0009}#controls .line{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;font-weight:700}#controls input{width:100%;accent-color:#e4bf82;margin:10px 0 2px}#controls small{font-size:10px;color:#aac0b9}.preset{display:flex;gap:5px;margin-top:10px}.preset button{flex:1;padding:8px 2px;background:#1c3038;border:1px solid #4c676d;color:#c9d8d4;font-weight:700;font-size:10px;border-radius:7px}.preset button.selected{background:#e2ba77;color:#16232a;border-color:#e6ca95}#loading{position:absolute;inset:0;z-index:8;background:#08151b;display:flex;align-items:center;justify-content:center;padding:26px;text-align:center;line-height:1.5;font-size:14px}#loading strong{display:block;color:#ecd2a5;margin-bottom:9px;font-size:21px}#loading button{margin-top:12px;border:1px solid #b89b66;background:#e7be7d;border-radius:8px;padding:9px 15px;font-weight:800;color:#15232b}#tip{position:absolute;left:0;right:0;top:105px;font-size:11px;color:#d7e7d6;text-align:center;text-shadow:0 2px 6px #000;pointer-events:none;animation:fade 7s forwards}@keyframes fade{0%,65%{opacity:1}100%{opacity:0}}#footer{position:absolute;left:0;right:0;bottom:118px;text-align:center;font-size:10px;color:#e9e6ceaa;pointer-events:none;text-shadow:0 1px 4px #000}@media(max-height:700px){#controls{padding:8px}#footer{bottom:100px}#tip{top:79px}}@media(min-width:768px){#game{border-radius:14px}}
+#controls{background:#07151cd9;border-color:#b3a07860}#game{border-color:#aa917350}.brand{letter-spacing:.11em}#footer{color:#e9e6ceee}
+
+.scene-switch{display:flex;gap:8px;margin-bottom:12px}.scene-switch button{flex:1;padding:10px 4px;color:#d6e4dc;background:#1b2d33;border:1px solid #657774;border-radius:9px;font-size:11px;font-weight:900;touch-action:manipulation}.scene-switch button.selected{background:#e0be85;color:#19282a;border-color:#e5d3ae}
+#sceneHelp{position:absolute;top:126px;left:12px;right:12px;text-align:center;color:#d9e0d5;font-size:10px;pointer-events:none;text-shadow:0 2px 8px #000}
+.pill{max-width:155px;text-align:center;font-size:9px}
+@media(max-height:740px){#controls{padding:9px}.scene-switch{margin-bottom:8px}.scene-switch button{padding:8px 2px}}
+</style>
+</head><body><main id="stage"><div id="game"><canvas id="renderCanvas" aria-label="Demo grafica tridimensionale di Ultimo Baluardo"></canvas><div id="shade"></div><div id="top"><div><div class="brand">ULTIMO BALUARDO <span style="color:#e7c27e">3D</span></div><div class="sub">STILE INTERMEDIO · PROVA BOSS</div></div><div class="pill" id="count">22 ZOMBIE · 3 SOLDATI</div><button id="pause" title="Pausa" aria-label="Pausa">Ⅱ</button></div><div id="tip">Trascina sulla strada per spostare la squadra</div><div id="sceneHelp">Zombie comuni, corridori, corazzati e inseguitori</div><div id="footer">Stile intermedio · 22 zombie · Boss corazzato · Camera 8</div><section id="controls"><div class="scene-switch"><button type="button" data-scene="horde" class="selected" aria-pressed="true">22 ZOMBIE</button><button type="button" data-scene="boss" aria-pressed="false">MOSTRA IL BOSS</button></div><div class="line"><label for="height">ALTEZZA TELECAMERA</label><output id="heightValue">8</output></div><input id="height" type="range" min="6" max="20" step="1" value="8"/><div class="line"><small>Più bassa: vista dalle spalle</small><small>Più alta: vista dall'alto</small></div><div class="preset"><button type="button" data-h="8" class="selected">SCELTA 8</button><button type="button" data-h="12">MEDIA</button><button type="button" data-h="18">ALTA</button></div></section><div id="loading"><div><strong>ULTIMO BALUARDO 3D</strong><span id="loadingText">Caricamento del motore tridimensionale…</span><div id="loadingAction"></div></div></div></div></main>
+<script>
+(function(){
+  var loaded=false;
+  function fail(){if(loaded)return;document.getElementById('loadingText').textContent='Il motore 3D non è stato caricato. Controlla la connessione Internet e riprova in Safari.';document.getElementById('loadingAction').innerHTML='<button type="button" onclick="location.reload()">RIPROVA</button>';}
+  function load(url, next){var s=document.createElement('script');s.src=url;s.onload=function(){if(window.BABYLON){loaded=true;start()}else next()};s.onerror=next;document.head.appendChild(s)}
+  load('https://cdn.babylonjs.com/babylon.js',function(){load('https://cdn.jsdelivr.net/npm/babylonjs@9.33.1/babylon.js',fail)});
+  function start(){
+    var B=window.BABYLON,canvas=document.getElementById('renderCanvas'),engine;
+    try{engine=new B.Engine(canvas,true,{preserveDrawingBuffer:false,stencil:false,powerPreference:'high-performance'});}catch(err){document.getElementById('loadingText').textContent='Questo browser non riesce ad avviare WebGL: '+err.message;return}
+    engine.setHardwareScalingLevel(Math.max(1,Math.min(1.6,(window.devicePixelRatio||1)/1.5)));
+    var scene=new B.Scene(engine);scene.clearColor=new B.Color4(.09,.115,.12,1);scene.fogMode=B.Scene.FOGMODE_EXP2;scene.fogDensity=.006;scene.fogColor=new B.Color3(.17,.20,.20);
+    // Gentle filmic exposure: keep detail without hot spots on helmets or barrels.
+    scene.imageProcessingConfiguration.toneMappingEnabled=true;
+    scene.imageProcessingConfiguration.toneMappingType=B.ImageProcessingConfiguration.TONEMAPPING_ACES;
+    scene.imageProcessingConfiguration.exposure=.92;
+    scene.imageProcessingConfiguration.contrast=1.03;
+    var camera=new B.FreeCamera('camera',new B.Vector3(0,7,-18),scene);camera.setTarget(new B.Vector3(0,1.3,21));camera.fov=.84;camera.minZ=.1;camera.maxZ=150;
+    var ambient=new B.HemisphericLight('ambient',new B.Vector3(.25,1,.4),scene);ambient.intensity=.93;ambient.diffuse=new B.Color3(.87,.92,.89);ambient.groundColor=new B.Color3(.33,.37,.36);
+    var moon=new B.DirectionalLight('moon',new B.Vector3(-.35,-1,.5),scene);moon.intensity=.48;moon.diffuse=new B.Color3(.83,.89,.89);
+    var warm=new B.PointLight('warm',new B.Vector3(-7,4,15),scene);warm.diffuse=new B.Color3(.77,.65,.52);warm.intensity=2.2;warm.range=23;
+    function mat(name,hex,em){var m=new B.StandardMaterial(name,scene);m.diffuseColor=B.Color3.FromHexString(hex);m.specularColor=new B.Color3(.018,.022,.022);m.specularPower=48;if(em)m.emissiveColor=B.Color3.FromHexString(em);return m}
+    var M={road:mat('asphalt','#303638'),side:mat('sidewalk','#212c30'),mark:mat('road lines','#b59b63'),edge:mat('edge','#58635b'),wall:mat('concrete','#29343a'),rust:mat('rust','#7e4d37'),metal:mat('steel','#5e7072'),black:mat('black','#12191b'),boots:mat('boots','#1d231f'),skin:mat('skin','#ae8b75'),uniform:mat('uniform','#526b57'),vest:mat('armor','#2c3935'),helmet:mat('helmet','#678575'),visor:mat('visor','#152d30','#10272b'),zSkin:mat('zombie skin','#7f9980'),zCloth:mat('zombie clothes','#615b4a'),zDark:mat('zombie dark','#3f524b'),eyes:mat('infected eyes','#ee7865','#af2617'),armor:mat('riot armor','#4f5963'),boss:mat('boss','#805444'),barrel:mat('barrel red','#ad3d32'),barrelDark:mat('barrel dark','#652c25'),gold:mat('brass','#baa476','#221a11'),flash:mat('flash','#d3b38b','#5d4125')};
+    Object.assign(M,{
+      white:mat('painted stencil','#c7d2c4'),
+      reflective:mat('reflective bands','#ab9979','#282018'),
+      olive:mat('olive cloth','#455c48'),
+      patch:mat('shoulder patch','#d1b86f'),
+      gore:mat('dried blood','#782d29'),
+      graySkin:mat('pale infected skin','#9a9d83'),
+      mutant:mat('mutant skin','#637e5b'),
+      helmetDark:mat('helm graphite','#3b4948'),
+      eyeGlow:mat('muted red eyes','#a96056','#37110c'),
+      glass:mat('glass green','#567b6d','#163126'),
+      lightBlue:mat('cold LED','#6e8986','#1b2929')
+    });
+    M.flash.disableLighting=true; M.flash.emissiveColor=new B.Color3(.34,.23,.11);M.flash.alpha=.72;
+
+    function box(name,w,h,d,x,y,z,material,parent){var m=B.MeshBuilder.CreateBox(name,{width:w,height:h,depth:d},scene);m.position.set(x,y,z);m.material=material;if(parent)m.parent=parent;return m}
+    function sphere(name,diam,x,y,z,material,parent,segments){var m=B.MeshBuilder.CreateSphere(name,{diameter:diam,segments:segments||8},scene);m.position.set(x,y,z);m.material=material;if(parent)m.parent=parent;return m}
+    function cyl(name,r1,r2,h,x,y,z,material,parent){var m=B.MeshBuilder.CreateCylinder(name,{height:h,diameterTop:r1*2,diameterBottom:r2*2,tessellation:12},scene);m.position.set(x,y,z);m.material=material;if(parent)m.parent=parent;return m}
+    box('road surface',15,.16,180,0,-.13,50,M.road);
+    for(var side of [-1,1]){
+      box('sidewalk',5,.24,180,side*10,0,50,M.side);
+      box('curb',.2,.31,180,side*7.65,.10,50,M.edge);
+      for(var k=0;k<19;k++){var z=-8+k*8.5,seed=(k*31+side*7);
+        var building=box('ruined building',3+((k*7)%3),2+(k%4)*1.35,5.5,side*(10.2+(k%2)*1.25),1+(k%4)*.65,z,M.wall);
+        var roof=box('roof trim',3.3+(k*7%3),.12,5.8,building.position.x,building.position.y+(2+(k%4)*1.35)/2,z,M.metal);
+        if(k%3===0)box('debris',.8,.25,.9,side*8.5,.10,z+2,M.rust);
+      }
+    }
+    var lines=[];for(var i=0;i<35;i++)for(var lane of [-2.8,2.8])lines.push(box('lane dash',.13,.025,2.2,lane,.005,i*5-10,M.mark));
+    var trail=[];for(i=0;i<18;i++)trail.push(box('cracked patch',.18,.018,1.4,(i*23%110)/10-5.5,.008,i*8-10,M.black));
+    // Street lamps and small pieces of wreckage provide real depth cues without hiding the figures.
+    for(var lampZ=3;lampZ<100;lampZ+=25){
+      for(var side of [-1,1]){
+        var x=side*8.5;
+        cyl('streetlight mast',.085,.11,5.1,x,2.6,lampZ,M.metal);
+        box('streetlight arm',1.25,.11,.12,x-side*.57,5.12,lampZ,M.metal);
+        box('streetlight light',.48,.09,.42,x-side*1.08,5.04,lampZ,M.lightBlue);
+      }
+    }
+    for(var d=0;d<26;d++){
+      var xSide=(d%2===0?-1:1),z=5+d*4.4;
+      box('asphalt small debris',.20+(d%4)*.13,.07,.18+(d%3)*.16,xSide*(6.0+(d%4)*.23),.035,z,d%4?M.wall:M.rust);
+    }
+    function ellipsoid(name,diam,x,y,z,matr,parent,sx,sy,sz){
+      var m=sphere(name,diam,x,y,z,matr,parent,12);
+      m.scaling.set(sx||1,sy||1,sz||1);return m;
+    }
+    function capsule(name,diam,height,x,y,z,material,parent){
+      var m=B.MeshBuilder.CreateCapsule(name,{radius:diam/2,height:height,tessellation:12,subdivisions:2},scene);
+      m.position.set(x,y,z);m.material=material;if(parent)m.parent=parent;return m;
+    }
+    function softPlate(name,w,h,d,x,y,z,material,parent){
+      // Rounded armor panels: broad ellipsoid instead of sharp-edged boxes.
+      return ellipsoid(name,1,x,y,z,material,parent,w,h,d);
+    }
+    function jointLimb(name, parent,px,py,pz,w,h,depth,material,handMaterial,handX,handY,handZ){
+      var joint=new B.TransformNode(name,scene);joint.parent=parent;joint.position.set(px,py,pz);
+      var part=capsule(name+' rounded limb',Math.max(w,depth)*.99,h+.12,handX||0,-h*.49,handZ||0,material,joint);part.scaling.x=w/Math.max(w,depth);part.scaling.z=depth/Math.max(w,depth);
+      if(handMaterial)ellipsoid(name+' hand',Math.max(w,depth)*1.07,handX||0,-h*.95,handZ||0,handMaterial,joint,1,.85,1);
+      return joint;
+    }
+    function character(name,isZombie,kind){
+      var root=new B.TransformNode(name,scene);
+      var armored=kind==='armored',runner=kind==='runner',stalker=kind==='stalker';
+      var scale=isZombie?(armored?1.30:runner?.95:stalker?1.08:1.10):1.08;
+      root.scaling.setAll(scale);
+      var cloth=isZombie?(armored?M.armor:runner?M.zDark:stalker?M.olive:M.zCloth):M.uniform;
+      var skin=isZombie?(runner?M.graySkin:stalker?M.mutant:M.zSkin):M.skin;
+      var shadow=cyl('foot shadow',.47,.49,.013,0,.014,0,M.black,root);shadow.scaling.z=1.35;
+      var hip=ellipsoid('rounded hips',1,0,1.09,0,cloth,root,.78,.40,.54);
+      ellipsoid('rounded torso',1,0,1.72,0,cloth,root,.91,1.12,.64);
+      ellipsoid('soft shoulders',1,0,2.02,0,cloth,root,1.04,.45,.64);
+      var head=ellipsoid('smooth head',.73,0,2.58,.03,skin,root,.82,1.04,.85);
+      var leftLeg=jointLimb('left leg',root,-.24,1.02,0,.30,.85,.32,cloth,null,0,0,0);
+      var rightLeg=jointLimb('right leg',root,.24,1.02,0,.30,.85,.32,cloth,null,0,0,0);
+      for(var l of [leftLeg,rightLeg]){
+        softPlate('rounded knee pad',.34,.25,.39,0,-.46,.14,isZombie?cloth:M.vest,l);
+        softPlate('boot',.39,.26,.59,0,-.93,.13,isZombie?M.black:M.boots,l);
+      }
+      var leftArm=jointLimb('left arm',root,-.57,2.14,0,.30,.80,.32,cloth,skin,-.03,0,.04);
+      var rightArm=jointLimb('right arm',root,.57,2.14,0,.30,.80,.32,cloth,skin,.03,0,.04);
+      var arms=[leftArm,rightArm], legs=[leftLeg,rightLeg];
+      if(!isZombie){
+        // Separate vest plates, pouches, backpack, collar and radio create a readable silhouette from behind.
+        softPlate('rounded front vest',.80,.80,.22,0,1.78,.33,M.vest,root);
+        softPlate('rounded back vest',.86,.89,.24,0,1.76,-.35,M.vest,root);
+        softPlate('soft backpack',.68,.80,.39,0,1.76,-.55,M.helmetDark,root);
+        softPlate('bedroll',.72,.23,.38,0,2.18,-.51,M.olive,root);
+        for(var s of [-1,1]){
+          box('backpack shoulder strap',.095,.72,.10,s*.27,1.75,-.72,M.metal,root);
+          softPlate('curved shoulder armor',.45,.30,.52,s*.57,2.16,0,M.vest,root);
+          box('shoulder insignia',.21,.08,.16,s*.67,2.16,-.20,M.patch,root);
+          softPlate('utility pouch',.27,.29,.26,s*.30,1.16,-.34,M.helmetDark,root);
+        }
+        box('belt',.92,.14,.53,0,1.19,0,M.black,root);
+        box('vest center seam',.06,.55,.025,0,1.84,-.425,M.helmet,root);
+        box('vest reflection stripe',.39,.06,.025,0,1.56,-.43,M.reflective,root);
+        softPlate('radio block',.21,.33,.24,.54,2.03,-.16,M.black,root);
+        box('radio antenna',.034,.38,.03,.59,2.35,-.16,M.black,root);
+        var helmet=sphere('combat helmet',.78,0,2.77,.01,M.helmet,root,16);helmet.scaling.y=.64;
+        box('visor rim',.72,.08,.62,0,2.65,.02,M.helmetDark,root);
+        box('helmet rear rim',.68,.10,.22,0,2.63,-.28,M.vest,root);
+        box('back goggles strap',.55,.065,.02,0,2.79,-.32,M.black,root);
+        softPlate('goggles frame',.44,.17,.12,0,2.57,.30,M.black,root);
+        box('goggle lenses',.36,.08,.025,0,2.59,.36,M.glass,root);
+        // Weapon is held slightly forward, clearly distinct from the square torso.
+        var gun=new B.TransformNode('assault rifle',scene);gun.parent=root;gun.position.set(.08,1.82,.47);
+        softPlate('receiver',.28,.24,.59,0,0,0,M.black,gun);
+        box('barrel',.10,.10,.94,0,.035,.64,M.helmetDark,gun);
+        box('muzzle brake',.18,.15,.18,0,.035,1.12,M.metal,gun);
+        softPlate('stock',.34,.23,.49,0,.04,-.38,M.black,gun);
+        softPlate('rifle magazine',.25,.40,.28,0,-.27,.20,M.helmetDark,gun);
+        box('rifle sight',.11,.13,.30,0,.17,.20,M.black,gun);
+        for(var a of arms)a.rotation.x=-.43;
+      }else{
+        // Asymmetry: exposed arms, torn clothing, hunched heads, scars and distinct class markings.
+        head.position.y=runner?2.52:2.46;
+        var face=box('decayed face',.43,.28,.09,0,2.49,.34,skin,root);
+        box('open mouth',.20,.075,.04,0,2.30,.39,M.black,root);
+        for(var side of [-1,1]){
+          ellipsoid('infected glowing eye',.135,side*.17,2.54,.357,M.eyeGlow,root,1,.75,.48);
+          box('dirty cheek',.11,.20,.035,side*.27,2.42,.33,M.gore,root);
+          box('ragged elbow',.28,.17,.28,side*.60,1.59,.06,M.gore,root);
+        }
+        softPlate('torn upper cloth',.80,.40,.15,-.05,1.91,.33,cloth,root);
+        box('wound glowing under cloth',.27,.28,.032,.24,1.78,.39,M.gore,root);
+        for(var a of arms)a.rotation.x=.42;
+        if(runner){
+          box('runner torn chest',.72,.11,.11,.05,1.66,.36,M.gore,root);
+          leftArm.rotation.z=-.15;rightArm.rotation.z=.22;
+        }
+        if(armored){
+          softPlate('rounded riot breastplate',1.05,.90,.29,0,1.80,.34,M.armor,root);
+          softPlate('rounded riot backplate',1.05,.87,.24,0,1.77,-.35,M.helmetDark,root);
+          for(var s of [-1,1]){
+            softPlate('riot shoulder cap',.54,.40,.58,s*.56,2.13,0,M.armor,root);
+            softPlate('riot knee plate',.38,.33,.43,s*.24,.57,.14,M.metal,root);
+          }
+          var riotHelmet=softPlate('armored round helmet',.81,.48,.72,0,2.74,0,M.armor,root);
+          box('cracked face shield',.58,.24,.07,0,2.60,.39,M.glass,root);
+          box('helmet red stripe',.49,.06,.035,0,2.90,-.23,M.gore,root);
+        }else if(stalker){
+          for(var spike of [-1,1]){
+            var horn=cyl('mutation spine',0,.16,.64,spike*.32,2.20,-.16,M.mutant,root);horn.rotation.z=spike*.38;
+          }
+          softPlate('infected back growth',.57,.50,.27,0,1.98,-.36,M.mutant,root);
+        }
+      }
+      return {root:root,limbs:[leftLeg,rightLeg,leftArm,rightArm],phase:Math.random()*6.28,kind:kind,isZombie:isZombie};
+    }
+    var soldiers=[];for(i=0;i<3;i++){var ch=character('Soldato '+(i+1),false);ch.root.position.set((i-1)*1.5,0,0);soldiers.push(ch)}
+    var squad=new B.TransformNode('squad',scene);soldiers.forEach(function(s){s.root.parent=squad});squad.position.z=2;
+    var enemies=[];var lanes=[-4.2,-1.2,2,4.5];for(i=0;i<22;i++){var kind=i%5===0?'runner':i%5===1?'armored':i%5===2?'stalker':'normal',z=19+i*3.3+Math.random()*4,ch=character('Zombie '+(i+1),true,kind);ch.root.position.set(lanes[i%lanes.length]+(i%3-1)*.35,0,z);ch.root.rotation.y=Math.PI;enemies.push({ch:ch,z:z,lane:ch.root.position.x,speed:kind==='runner'?3.5:kind==='armored'?1.45:2.05})}
+
+    // Armored boss showcase: distinctive silhouette and readable weak point.
+    var bossRoot=new B.TransformNode('Lo Sfondatore',scene);
+    var bossM={armor:mat('boss graphite','#404b49'),armor2:mat('boss weathered steel','#6b7873'),skin:mat('boss infected skin','#77836f'),dark:mat('boss seams','#1b2629'),mark:mat('boss rust','#925b48'),weak:mat('boss weakpoint','#e0a85c','#4a2410')};
+    function bossEll(n,x,y,z,scx,scy,scz,material){var m=B.MeshBuilder.CreateSphere(n,{diameter:1,segments:14},scene);m.scaling.set(scx,scy,scz);m.position.set(x,y,z);m.parent=bossRoot;m.material=material;return m}
+    function bossBox(n,w,h,d,x,y,z,material){var m=box(n,w,h,d,x,y,z,material,bossRoot);return m}
+    // Large but rounded and optimized, several distinct material zones.
+    bossEll('massive rounded torso',0,2.8,0,1.65,1.85,1.04,bossM.armor);
+    bossEll('huge shoulder left',-1.55,3.55,0,1.02,.83,.91,bossM.armor2);
+    bossEll('huge shoulder right',1.55,3.55,0,1.02,.83,.91,bossM.armor2);
+    bossEll('mutant neck',0,4.03,.20,.62,.55,.60,bossM.skin);
+    bossEll('brutal head',0,4.58,.30,.70,.73,.62,bossM.skin);
+    bossEll('riot helmet',0,4.9,.22,.82,.52,.70,bossM.armor);
+    bossEll('face guard',0,4.52,.78,.52,.40,.20,bossM.dark);
+    for(var s of [-1,1]){
+      bossEll('thick upper arm',s*1.86,2.66,.0,.60,1.21,.67,bossM.skin);
+      bossEll('forearm steel',s*1.93,1.58,.35,.61,.83,.62,bossM.armor2);
+      bossEll('large fist',s*1.93,.92,.62,.56,.51,.56,bossM.skin);
+      bossEll('leg plates',s*.78,1.18,0,.72,1.32,.70,bossM.armor);
+      bossEll('boots',s*.80,.38,.30,.77,.44,.95,bossM.dark);
+      bossEll('eye',s*.26,4.63,.82,.13,.12,.10,M.eyeGlow);
+      bossEll('spiked pauldrons',s*1.75,4.07,-.30,.47,.25,.62,bossM.mark);
+    }
+    bossEll('armor sternum panel',0,2.90,.98,.96,.99,.24,bossM.armor2);
+    var bossWeak=bossEll('VULNERABILE - glowing weak point',0,2.97,1.24,.31,.31,.15,bossM.weak);
+    bossBox('helmet ridge',1.38,.15,.28,0,5.06,.22,bossM.dark);
+    for(var s of [-1,1])bossBox('leg scratches',.09,.53,.06,s*.77,1.27,.66,bossM.mark);
+    bossRoot.position.set(0,0,28);
+    var sceneMode='horde',modeButtons=document.querySelectorAll('[data-scene]');
+    function setSceneMode(mode){
+      sceneMode=mode;
+      var showBoss=mode==='boss';
+      bossRoot.setEnabled(showBoss);
+      enemies.forEach(function(en){en.ch.root.setEnabled(!showBoss)});
+      modeButtons.forEach(function(b){b.classList.toggle('selected',b.dataset.scene===mode);b.setAttribute('aria-pressed',String(b.dataset.scene===mode))});
+      document.getElementById('count').textContent=showBoss?'BOSS: LO SFONDATORE':'22 ZOMBIE · 3 SOLDATI';
+      document.getElementById('sceneHelp').textContent=showBoss?'Boss corazzato, punto debole sul petto':'Zombie comuni, corridori, corazzati e inseguitori';
+    }
+    modeButtons.forEach(function(b){b.addEventListener('click',function(){setSceneMode(b.dataset.scene)})});
+    setSceneMode('horde');
+
+    var barrels=[];function barrel(x,z){var parent=new B.TransformNode('barile',scene);parent.position.set(x,0,z);
+      var shell=B.MeshBuilder.CreateCylinder('smooth red barrel',{height:1.1,diameterTop:1.02,diameterBottom:1.05,tessellation:32},scene);shell.parent=parent;shell.position.y=.61;shell.material=M.barrel;
+      for(var y of [.22,.63,1.04]){var hoop=B.MeshBuilder.CreateTorus('rounded barrel rim',{diameter:1.10,thickness:.075,tessellation:24},scene);hoop.parent=parent;hoop.position.y=y;hoop.material=M.barrelDark;}
+      cyl('top lid',.48,.48,.035,0,1.17,0,M.metal,parent);box('warning plate',.72,.31,.045,0,.72,-.485,M.gold,parent);
+      box('warning symbol outer',.34,.16,.05,0,.74,-.513,M.black,parent);
+      box('warning symbol central',.05,.18,.057,0,.74,-.542,M.reflective,parent);
+      box('stamped barrel label',.48,.11,.055,0,.42,-.513,M.white,parent);
+      box('rust scratch',.08,.34,.035,.35,.47,-.39,M.rust,parent);
+      cyl('barrel top cap',.12,.12,.045,-.14,1.24,0,M.helmetDark,parent);
+      cyl('barrel plug',.09,.09,.08,.23,1.23,.13,M.metal,parent);
+      return parent}
+    barrels.push(barrel(-3.2,20),barrel(3.4,36),barrel(-2.6,52));
+    var barricades=[];for(i=0;i<4;i++){var x=[-5.2,5.1,-4.9,5.2][i],z=28+i*19;var barricade=softPlate('round concrete roadblock',1.85,.94,.70,x,.45,z,M.metal);box('orange stripe',1.74,.16,.04,x,.62,z-.35,M.rust);barricades.push(barricade)}
+    var shots=[];for(i=0;i<3;i++){var shot=box('muzzle flash',.08,.08,.85,0,1.85,0,M.flash);shot.isVisible=false;shots.push(shot)}
+    var hInput=document.getElementById('height'),hValue=document.getElementById('heightValue');function setHeight(v){v=Number(v);hInput.value=v;hValue.textContent=v;camera.position.set(0,v,-17.5+(12-v)*.25);camera.setTarget(new B.Vector3(0,1.2,20));document.querySelectorAll('.preset button').forEach(function(b){b.classList.toggle('selected',Number(b.dataset.h)===v)})};setHeight(8);
+    hInput.addEventListener('input',function(){setHeight(this.value)});document.querySelectorAll('.preset button').forEach(function(btn){btn.addEventListener('click',function(){setHeight(btn.dataset.h)})});
+    var dragging=false,targetX=0;
+    function moveFromPointer(e){var r=canvas.getBoundingClientRect(),f=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width));targetX=(f-.5)*11.6}
+    canvas.addEventListener('pointerdown',function(e){dragging=true;try{canvas.setPointerCapture(e.pointerId)}catch(_){ }moveFromPointer(e)});
+    canvas.addEventListener('pointermove',function(e){if(dragging)moveFromPointer(e)});
+    canvas.addEventListener('pointerup',function(){dragging=false});canvas.addEventListener('pointercancel',function(){dragging=false});
+    var paused=false;document.getElementById('pause').addEventListener('click',function(){paused=!paused;this.textContent=paused?'▶':'Ⅱ';this.setAttribute('aria-label',paused?'Riprendi':'Pausa')});document.addEventListener('visibilitychange',function(){if(document.hidden){paused=true;document.getElementById('pause').textContent='▶'}});
+    var elapsed=0;scene.onBeforeRenderObservable.add(function(){if(paused)return;var dt=Math.min(.04,engine.getDeltaTime()/1000);elapsed+=dt;
+      squad.position.x+=(targetX-squad.position.x)*Math.min(1,dt*8);
+      soldiers.forEach(function(c,i){
+        var step=Math.sin(elapsed*8+i*.9);
+        c.root.position.y=.028*Math.abs(step);
+        c.limbs[0].rotation.x=step*.13;
+        c.limbs[1].rotation.x=-step*.13;
+        c.limbs[2].rotation.x=-.44+step*.035;
+        c.limbs[3].rotation.x=-.44-step*.035;
+        c.root.rotation.z=.016*Math.sin(elapsed*4+i);
+      });
+      enemies.forEach(function(en,i){if(sceneMode==='boss')return;en.z-=en.speed*dt;if(en.z<5)en.z=68+Math.random()*28;en.ch.root.position.z=en.z;en.ch.root.position.x=en.lane+Math.sin(elapsed*.7+i)*.45;en.ch.root.position.y=Math.abs(Math.sin(elapsed*(en.speed*1.9)+en.ch.phase))*.08;var stride=Math.sin(elapsed*(en.speed*2.4)+en.ch.phase);
+        en.ch.limbs[0].rotation.x=stride*(en.ch.kind==='runner'?.68:.39);
+        en.ch.limbs[1].rotation.x=-stride*(en.ch.kind==='runner'?.68:.39);
+        en.ch.limbs[2].rotation.x=.30-stride*.36;
+        en.ch.limbs[3].rotation.x=.30+stride*.36;
+        en.ch.root.rotation.z=Math.sin(elapsed*en.speed*.65+i)*.065;
+        en.ch.root.rotation.x=en.ch.kind==='runner'?.12:0;});
+      if(sceneMode==='boss'){bossRoot.position.z=19+Math.sin(elapsed*.65)*1.5;bossRoot.rotation.y=Math.PI+Math.sin(elapsed*.28)*.12;bossRoot.rotation.z=Math.sin(elapsed*.72)*.028;bossWeak.scaling.set(.31*(1+.10*Math.sin(elapsed*4)),.31*(1+.10*Math.sin(elapsed*4)),.15);}
+      lines.forEach(function(l){l.position.z-=dt*7;if(l.position.z< -12)l.position.z+=175});
+      barrels.forEach(function(b){b.position.z-=dt*1.2;if(b.position.z<4)b.position.z=58+Math.random()*42});
+      barricades.forEach(function(b){b.position.z-=dt*1.2;if(b.position.z<3)b.position.z=73+Math.random()*35});
+      for(i=0;i<3;i++){var shoot=(elapsed*3+i*.46)%1.4<.10,shot=shots[i];shot.isVisible=shoot;shot.position.x=squad.position.x+(i-1)*1.5+.1;shot.position.z=squad.position.z+1.8;shot.position.y=1.81;shot.scaling.z=shoot?1:0.1}
+    });
+    var loading=document.getElementById('loading');loading.style.display='none';engine.runRenderLoop(function(){scene.render()});window.addEventListener('resize',function(){engine.resize()});setTimeout(function(){engine.resize()},100);
+  }
+})();
+</script></body></html>
