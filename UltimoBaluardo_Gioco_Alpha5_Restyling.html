@@ -1,0 +1,234 @@
+<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><title>Ultimo Baluardo — Alpha 5 Restyling</title><style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#101727;color:#f8f1e7;font-family:system-ui,-apple-system,sans-serif}body{display:grid;place-items:center}.game{position:relative;width:min(100vw,57dvh);height:min(100dvh,175.44vw);overflow:hidden;background:linear-gradient(#806997,#d8a18c 44%,#56597d);touch-action:none}canvas{width:100%;height:100%;display:block;touch-action:none}.hud{position:absolute;top:max(9px,env(safe-area-inset-top));left:8px;right:8px;pointer-events:none}.top{display:flex;align-items:center;justify-content:space-between;gap:5px}.logo{font-weight:1000;letter-spacing:.065em;font-size:clamp(11px,2.65vw,15px);color:#fff1c4;text-shadow:0 2px 2px #171e35,0 0 8px #181b31}.pill{border:1px solid #ffd9a583;border-radius:9px;background:#1b2541d6;box-shadow:0 3px 9px #0004;padding:6px 8px;font-size:10px;font-weight:800;white-space:nowrap}.pill b{color:#f6cc72}.statline{display:flex;gap:5px;margin-top:6px}.stat{background:#16243bda;border:1px solid #a4b5ca69;border-radius:8px;padding:5px 7px;font-size:10px;flex:1;text-align:center}.stat strong{color:#fff0bd}.mode{position:absolute;top:80px;left:9px;right:9px;display:flex;gap:6px}.mode button{flex:1;min-height:35px;border-radius:9px;background:#263b58e8;border:1px solid #7796ac;color:#eaf9ff;font-size:11px;font-weight:850;box-shadow:0 3px 6px #1116}.mode button.on{background:#f3bd5a;border-color:#ffe6a1;color:#272b42}.bottom{position:absolute;bottom:max(16px,env(safe-area-inset-bottom));left:10px;right:10px;pointer-events:none;text-align:center}.hint{display:inline-block;background:#1b2e46cf;border:1px solid #b5b5be7b;padding:8px 11px;font-size:11px;border-radius:10px;max-width:100%;line-height:1.35}.bossbar{display:none;margin-top:6px;height:14px;border:2px solid #fee5ad;background:#341b32;border-radius:6px;overflow:hidden}.bossbar div{background:linear-gradient(90deg,#fd7356,#ffd076);height:100%;width:100%;transition:width .15s}.bossname{display:none;text-align:center;margin-top:6px;font-weight:900;font-size:12px;color:#fff1c3;text-shadow:0 2px 3px #000}.flash{position:absolute;top:46%;left:0;right:0;font-size:19px;text-align:center;font-weight:1000;color:#fff4a0;text-shadow:0 3px 5px #111,0 0 16px #9a581f;pointer-events:none;opacity:0;transition:opacity .2s}.error{position:absolute;inset:35% 9%;border:1px solid #f99;background:#1a1c2e;padding:20px;border-radius:12px;display:none;z-index:10}.footer{position:absolute;right:6px;bottom:3px;font-size:9px;color:#eef0f3b0;pointer-events:none}
+
+.modal{position:absolute;inset:0;background:#0c152acb;display:grid;place-items:center;z-index:8;padding:16px}.modal[hidden]{display:none}.sheet{width:100%;background:linear-gradient(160deg,#29334d,#172438);border:2px solid #d5b979;border-radius:18px;padding:18px 14px;text-align:center;box-shadow:0 14px 45px #000a}.sheet h2{font-size:19px;letter-spacing:.06em;color:#ffe5a0;margin:0 0 8px}.sheet p{line-height:1.45;color:#dbe6e6;font-size:12px;margin:0 0 14px}.choices{display:grid;grid-template-columns:1fr 1fr;gap:8px}.choices button{border:1px solid #8eacb3;border-radius:11px;padding:15px 7px;background:#385368;color:#fff4db;font-weight:900;font-size:12px;min-height:57px}.choices button.full{grid-column:1/-1;background:#ceaa5d;color:#15243b}.statline .stat{font-size:10px}.mode{top:79px}.mode button{font-size:10px;min-height:32px}.flash{z-index:3;line-height:1.3;padding:0 10px}.footnote{font-size:10px}
+
+/* ALPHA 5 - VISUAL ONLY: bespoke HUD, no gameplay parameter changes */
+.game{background:linear-gradient(180deg,#4f648d 0%,#a985ae 30%,#e6aa91 58%,#4b536c 100%)}
+.hud{top:max(10px,env(safe-area-inset-top));left:10px;right:10px}
+.top{align-items:center;gap:5px}
+.logo{display:flex;align-items:center;gap:5px;letter-spacing:.04em;font-size:clamp(11px,2.5vw,15px);color:#fff4d6;text-shadow:0 2px 4px #0a152f}
+.brand-mark{display:inline-grid;place-items:center;background:linear-gradient(150deg,#ffdf83,#ad7632);border:1px solid #fff0b9;border-radius:7px;color:#25354b;padding:2px 5px;box-shadow:0 2px 6px #0007;font-size:13px}
+.edition{font-size:8px;letter-spacing:.12em;background:#efc778;color:#27344e;padding:3px 5px;border-radius:5px;text-shadow:none}
+.pill{background:linear-gradient(145deg,#19243edb,#25385be8);border:1px solid #b8c7e589;border-radius:11px;box-shadow:0 3px 7px #0005}
+.statline{gap:6px;margin-top:8px}
+.stat{font-size:clamp(9px,1.9vw,11px);background:linear-gradient(145deg,#192844eb,#253b58df);border:1px solid #a8c6e69c;border-radius:10px;padding:8px 4px;box-shadow:inset 0 1px 0 #ffffff18,0 3px 7px #07112455}
+.stat strong{color:#ffe298;font-size:1.08em}
+.stat-icon{color:#ffd88b;font-size:12px;margin-right:2px}
+.mode{top:83px;left:10px;right:10px;gap:6px}
+.mode button{min-height:34px;border:1px solid #9cb8dca3;border-radius:10px;background:linear-gradient(180deg,#35618c,#213b60);box-shadow:inset 0 1px 0 #ffffff4f,0 4px 8px #111b3766;font-weight:900;font-size:10px;letter-spacing:.04em}
+.mode button:active{transform:translateY(1px)}
+.mode button:last-child{background:linear-gradient(180deg,#65519b,#393971);border-color:#d0adf0a0}
+.bottom{bottom:max(18px,env(safe-area-inset-bottom))}
+.hint{font-size:10px;max-width:96%;color:#f6f9ff;background:#192946e8;border:1px solid #acc5eb9c;border-radius:12px;box-shadow:0 2px 9px #0005}
+.bossbar{border-color:#fbdc93;box-shadow:0 0 9px #ed805a7a}
+.sheet{background:linear-gradient(155deg,#344665,#19263e);box-shadow:0 16px 55px #000a}
+</style><script src="https://cdn.babylonjs.com/babylon.js"></script></head><body><main class="game" id="game"><canvas id="renderCanvas" aria-label="Demo giocabile Ultimo Baluardo Arcade A"></canvas><div class="hud"><div class="top"><span class="logo"><span class="brand-mark">✦</span> ULTIMO BALUARDO <span class="edition">ARCADE</span></span><span class="pill" id="fps">FPS: …</span></div><div class="statline"><span class="stat"><span class="stat-icon">◈</span> SOLDATI <strong id="soldierCount">3</strong></span><span class="stat"><span class="stat-icon">⚑</span> ONDATA <strong id="waveCount">1/10</strong></span><span class="stat"><span class="stat-icon">●</span> MONETE <strong id="coins">0</strong></span></div><div class="bossname" id="bossname">LO SFONDATORE</div><div class="bossbar" id="bossbar"><div id="bosshealth"></div></div></div><div class="mode"><button id="pauseBtn">PAUSA</button><button id="restartBtn">RICOMINCIA</button><button id="skipBtn">PROVA BOSS</button></div><div class="flash" id="flash">+ SOLDATI!</div><div class="modal" id="modal" hidden><div class="sheet"><h2 id="modalTitle">ULTIMO BALUARDO</h2><p id="modalText"></p><div class="choices" id="modalChoices"></div></div></div><div class="bottom"><span class="hint" id="hint">Sposta la squadra col mouse · Spara in avanti · Scegli le porte</span></div><div class="footer">ALPHA 5 RESTYLING · CAMERA 8 · <span id="bootStatus">HTML caricato</span></div><div class="error" id="error"></div></main>
+<script>
+window.addEventListener('error',function(e){let s=document.getElementById('bootStatus');if(s)s.textContent='ERRORE: '+(e.message||'script');let p=document.getElementById('error');if(p){p.style.display='block';p.textContent='Errore: '+(e.message||'errore sconosciuto')}});
+window.addEventListener('unhandledrejection',function(e){let p=document.getElementById('error');if(p){p.style.display='block';p.textContent='Errore di caricamento: '+String(e.reason)}});
+(()=>{'use strict';document.getElementById('bootStatus').textContent='Script avviato';const B=window.BABYLON;const canvas=document.getElementById('renderCanvas'),panel=document.getElementById('error');if(!B){panel.style.display='block';panel.textContent='Non riesco a caricare Babylon.js. Serve una connessione Internet.';return}
+const engine=new B.Engine(canvas,true,{antialias:true,preserveDrawingBuffer:false,stencil:false,adaptToDeviceRatio:true});engine.setHardwareScalingLevel(Math.max(1,(devicePixelRatio||1)/2));const scene=new B.Scene(engine);document.getElementById('bootStatus').textContent='Motore inizializzato';scene.clearColor=new B.Color4(.71,.63,.70,1);scene.ambientColor=new B.Color3(.38,.39,.43);const cam=new B.FreeCamera('camera',new B.Vector3(0,8,-15.7),scene);cam.setTarget(new B.Vector3(0,1.35,19));cam.fov=.77;cam.minZ=.1;cam.maxZ=115;cam.inputs.clear();const ambient=new B.HemisphericLight('ambient',new B.Vector3(.3,1,-.5),scene);ambient.intensity=1.12;ambient.groundColor=new B.Color3(.58,.53,.62);const sun=new B.DirectionalLight('sun',new B.Vector3(-.35,-1,.6),scene);sun.intensity=.36;scene.imageProcessingConfiguration.toneMappingEnabled=true;scene.imageProcessingConfiguration.exposure=1.08;scene.imageProcessingConfiguration.contrast=1.09;
+const palette={asphalt:'#66667C',shoulder:'#85839A',line:'#F9DC93',grass:'#787D78',wall:'#897CA2',wall2:'#A28BA5',roof:'#5B5574',window:'#F5CB79',metal:'#6B7487',black:'#34394C',skin:'#F1BF8C',army:'#738C63',army2:'#88A271',darkArmy:'#465E4A',blue:'#536B9A',red:'#CB635E',rust:'#CB624D',yellow:'#FFE17C',zombie:'#AACA8E',zombie2:'#B7CFA0',zombieTop:'#A84F52',zombiePants:'#4F576B',bossSkin:'#B78EB7',bossArmor:'#66586F',bossGlow:'#FFC46B',cyan:'#57D8FB',gategreen:'#4ACB82',gateblue:'#48B5FA',white:'#FFF5DC'};
+let materials={};for(let [k,v] of Object.entries(palette)){let m=new B.StandardMaterial(k,scene);m.diffuseColor=B.Color3.FromHexString(v);m.specularColor=new B.Color3(.03,.03,.04);m.ambientColor=m.diffuseColor.scale(.28);materials[k]=m}function em(name,color){let m=new B.StandardMaterial(name,scene);m.diffuseColor=B.Color3.FromHexString(color);m.emissiveColor=m.diffuseColor.scale(.48);m.specularColor=B.Color3.Black();return m}let glowYellow=em('glowy','#FFE19D'),glowGreen=em('gateglow','#62EFA3'),glowBlue=em('blueglow','#77CEFF');
+const decor={curb:materials.white,awning:materials.rust,trunk:materials.darkArmy,leaf:materials.army2,shadow:em('shadow','#3C3A55'),skyline:materials.wall2};decor.shadow.emissiveColor=new B.Color3(.005,.005,.01);decor.shadow.alpha=.28;
+
+function box(n,w,h,d,x,y,z,m,parent=null){let o=B.MeshBuilder.CreateBox(n,{width:w,height:h,depth:d},scene);o.position.set(x,y,z);o.material=typeof m==='string'?materials[m]:m;if(parent)o.parent=parent;return o}function ball(n,d,x,y,z,m,parent=null){let o=B.MeshBuilder.CreateSphere(n,{diameter:d,segments:8},scene);o.position.set(x,y,z);o.material=typeof m==='string'?materials[m]:m;if(parent)o.parent=parent;return o}function cyl(n,d,h,x,y,z,m,parent=null,t=10){let o=B.MeshBuilder.CreateCylinder(n,{diameter:d,height:h,tessellation:t},scene);o.position.set(x,y,z);o.material=typeof m==='string'?materials[m]:m;if(parent)o.parent=parent;return o}function root(n,x,y,z,parent=null){let r=new B.TransformNode(n,scene);r.position.set(x,y,z);if(parent)r.parent=parent;return r}function textPlane(n,txt,color,w,h,x,y,z,parent=null){const t=B.MeshBuilder.CreatePlane(n,{width:w,height:h},scene);t.position.set(x,y,z);if(parent)t.parent=parent;const dt=new B.DynamicTexture(n+'Texture',{width:512,height:256},scene,true);dt.hasAlpha=true;const ctx=dt.getContext();ctx.clearRect(0,0,512,256);ctx.fillStyle=color;ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='900 83px Arial';ctx.fillText(txt,256,128);dt.update();const m=new B.StandardMaterial(n+'Mat',scene);m.diffuseTexture=dt;m.opacityTexture=dt;m.emissiveColor=B.Color3.White().scale(.58);m.backFaceCulling=false;t.material=m;return t}
+// VISUAL REBUILD - art-only static city props. Road collision and gameplay unchanged.
+box('road',10,.18,118,0,-.10,28,'asphalt');
+for(let side of [-1,1]){
+  box('edge',.18,.08,118,side*5,.03,28,'line');
+  box('sidewalk',3.5,.15,118,side*6.9,-.05,28,'shoulder');
+  box('raisedCurb',.23,.27,118,side*5.22,.09,28,'white');
+  // Paving joints: distant urban continuity, subtle and not gameplay obstacles.
+  for(let z=-18;z<80;z+=5.5){box('pavementJoint',3.15,.01,.045,side*6.94,.035,z,'roof')}
+  // Building blocks with separate storefront, windows, roofline and awnings.
+  for(let i=0;i<9;i++){
+    let z=-17+i*12.2, h=5.4+(Math.sin(i*2.32+side)*1.9+1.9), x=side*10.5;
+    let facade=(i%3===0?'wall2':'wall');
+    box('cityBuilding',3.8,h,9.3,x,h/2-.08,z,facade);
+    box('roofCap',4.1,.25,9.65,x,h+.02,z,'roof');
+    box('roofBand',.14,.28,9.6,side*8.51,h-.33,z,'roof');
+    let floors=Math.max(2,Math.floor((h-1)/1.55));
+    for(let f=1;f<=floors;f++)for(let wi=-1;wi<=1;wi++){
+      let zw=z+wi*2.42,xf=side*8.53;
+      box('windowFrame',.07,.89,1.21,xf,f*1.52+.26,zw,'roof');
+      box('warmWindow',.083,.65,.86,xf-side*.035,f*1.52+.26,zw,'window');
+      box('windowSill',.11,.10,1.40,xf-side*.09,f*1.52-.23,zw,'white');
+    }
+    if(i%2===0){
+      box('shopCanopy',1.04,.12,2.8,side*8.26,1.65,z,'rust');
+      box('shopDoor',.1,1.4,1.04,side*8.50,.71,z,'black');
+    }
+  }
+  // Streetlights, planters, trees and benches, kept outside the active road.
+  for(let i=0;i<7;i++){
+    let z=-13+i*15.8;
+    cyl('lamppost',.13,4.25,side*6.1,2.125,z,'metal',null,9);
+    box('lampArm',1.1,.13,.16,side*5.55,4.19,z,'metal');
+    box('lampShade',.90,.18,.60,side*5.03,4.10,z,'black');
+    box('lampGlow',.68,.055,.45,side*5.03,3.99,z,glowYellow);
+    if(i%2===0){
+      box('planter',1.2,.64,1.25,side*7.2,.32,z+5,'roof');
+      cyl('treeTrunk',.28,1.55,side*7.2,1.40,z+5,'darkArmy');
+      ball('treeCrown',2.25,side*7.2,3.03,z+5,'army2');
+      ball('treeCrownExtra',1.65,side*6.78,2.68,z+5.5,'army');
+    }else{
+      box('benchSeat',.75,.12,1.65,side*7.1,.82,z+4,'rust');
+      box('benchBack',.14,.77,1.65,side*7.42,1.17,z+4,'darkArmy');
+      for(let q of [-.55,.55])box('benchLeg',.12,.6,.12,side*7.1,.48,z+4+q,'black');
+    }
+  }
+}
+// Receding lane markings: preserved exact name for animation logic.
+for(let z=-16;z<80;z+=7.8)box('laneDash',.115,.014,3.4,0,.01,z,'line');
+// Crosswalk markings, low profile and visual only.
+for(let z of [11,65])for(let x=-3.9;x<4.1;x+=1.3)box('crosswalk',.79,.018,.32,x,.012,z,'white');
+// Decorative weathering and leaves, placed flush with asphalt.
+for(let i=0;i<28;i++){
+  let x=Math.sin(i*4.19)*4.15,z=-12+i*3.3;
+  let o=box('roadPatch',.34+(i%4)*.12,.008,.23+(i%3)*.18,x,.005,z,'shoulder');
+  o.rotation.y=Math.sin(i*6.37)*.74;
+}
+function barrel(x,z){let r=root('barrel',x,0,z);cyl('drum',.96,1.15,0,.57,0,'rust',r,12);cyl('band',1.015,.11,0,.28,0,'yellow',r,12);cyl('band',1.015,.11,0,.86,0,'yellow',r,12);cyl('lid',.89,.045,0,1.17,0,'black',r,12);let insignia=textPlane('boom','✹','#272A3B',.69,.55,0,.55,-.52,r);return r}function barrier(x,z){let r=root('barrier',x,0,z);let body=box('plastic',1.8,.85,.55,0,.47,0,'white',r);for(let i=-1;i<=1;i++){let stripe=box('stripe',.3,.89,.029,i*.55,.47,-.29,'rust',r);stripe.rotation.z=-.40}return r}
+// Two distant arcade gates, purely visual in this art-style test
+function previewGate(x,z,mat,light,label){let g=root('previewGate',x,0,z);box('postL',.19,3,.28,-1.98,1.5,0,mat,g);box('postR',.19,3,.28,1.98,1.5,0,mat,g);box('topBar',4.10,.24,.32,0,3.00,0,mat,g);box('gateGlass',3.8,2.45,.035,0,1.53,.0,light,g);textPlane('gateLabel',label,'#18324A',3.2,1.2,0,1.67,-.07,g);return g}
+
+let props=[];function propsReset(){for(let p of props)p.dispose();props=[];for(let i=0;i<5;i++){props.push(barrel((i%2?3.55:-3.65),9+i*11));if(i%2===0)props.push(barrier(3.4,17+i*9))}}/* dynamic props now spawn during waves */
+function makeSoldier(name,x,z,variation){let r=root(name,x,0,z),body=root('body',0,0,0,r);let tone=variation===1?'blue':variation===2?'red':'army';box('bootL',.5,.33,.75,-.27,.18,-.04,'black',body);box('bootR',.5,.33,.75,.27,.18,-.04,'black',body);let legL=root('legL',-.28,.91,0,body),legR=root('legR',.28,.91,0,body);box('pants',.46,.91,.5,0,-.41,0,variation===1?'darkArmy':'army',legL);box('pants',.46,.91,.5,0,-.41,0,variation===1?'darkArmy':'army',legR);box('torso',1.17,1.23,.72,0,1.64,0,tone,body);box('vest',.98,.76,.20,0,1.72,-.43,'darkArmy',body);box('pack',.86,.95,.45,0,1.6,.53,variation===1?'black':'army2',body);ball('neck',.53,0,2.29,0,'skin',body);box('head',.77,.76,.78,0,2.59,-.06,'skin',body);box('helmet',.91,.34,.88,0,2.93,-.09,variation===1?'blue':'army2',body);box('helmetBrim',1.02,.12,.99,0,2.79,-.18,variation===1?'blue':'army2',body);let armL=root('armL',-.72,2.08,0,body),armR=root('armR',.72,2.08,0,body);box('sleeve',.37,.86,.39,0,-.37,-.14,tone,armL).rotation.x=.55;box('sleeve',.37,.86,.39,0,-.37,-.14,tone,armR).rotation.x=.55;box('hand',.38,.31,.32,0,-.74,-.37,'skin',armL);box('hand',.38,.31,.32,0,-.74,-.37,'skin',armR);box('gun',.22,.23,1.12,.20,1.77,-.73,'black',body);box('barrel',.1,.12,.57,.20,1.77,-1.54,'metal',body);// A few gentle bevel-like silhouette details with minimal mesh cost.
+ball('helmetDome',.83,0,3.025,-.08,variation===1?'blue':'army2',body);
+box('vestBadge',.28,.20,.045,.0,1.92,-.551,'yellow',body);
+box('backpackFlap',.78,.19,.47,0,1.89,.63,'darkArmy',body);
+for(let side of [-1,1]){box('bootSole',.52,.10,.83,side*.27,.05,-.10,'black',body)}
+r.rotation.y=Math.PI;return {r,body,legL,legR,armL,armR,gunTip:new B.Vector3(.2,1.77,-1.84)}}
+function makeZombie(name,x,z,variant){let r=root(name,x,0,z),core=root('core',0,0,0,r);let fat=variant==='heavy',runner=variant==='runner',scale=fat?1.24:runner?.83:1;r.scaling.setAll(scale);let sk=variant==='heavy'?'zombie2':'zombie';let legs=[root('leftLeg',-.27,.94,0,core),root('rightLeg',.27,.94,0,core)];for(let l of legs){box('pants',.46,.91,.50,0,-.44,0,'zombiePants',l);box('feet',.48,.28,.7,0,-.92,-.14,'black',l)}box('tornShirt',fat?1.4:1.1,1.19,.78,0,1.56,0,variant==='runner'?'rust':'zombieTop',core);box('shirtPatch',.34,.33,.05,.21,1.5,-.42,'zombiePants',core);let head=root('headPivot',0,2.43,-.14,core);box('head',.85,.82,.82,0,0,0,sk,head);box('hair',.89,.22,.84,0,.41,.04,variant==='runner'?'black':'darkArmy',head);for(let s of [-1,1]){box('eye',.17,.18,.075,s*.22,.08,-.45,'black',head);box('pupil',.08,.09,.03,s*.22,.08,-.50,'yellow',head)}box('mouth',.39,.18,.06,0,-.23,-.45,'black',head);let arms=[root('leftArm',-.68,2.01,-.22,core),root('rightArm',.68,2.01,-.22,core)];for(let [i,a] of arms.entries()){a.rotation.x=-1.1;a.rotation.z=i===0?-.15:.15;box('arm',.38,.9,.39,0,-.44,-.03,sk,a);box('hand',.44,.31,.40,0,-.91,-.04,sk,a)}core.rotation.x=.08;return {r,core,head,legs,arms,variant,hp:variant==='heavy'?6:variant==='runner'?2:3,maxhp:variant==='heavy'?6:variant==='runner'?2:3,phase:Math.random()*6.28,alive:true}}
+function makeHordeZombie(name,x,z,variant){
+ let r=root(name,x,0,z),core=root('body',0,0,0,r);
+ let heavy=variant==='heavy',runner=variant==='runner';r.scaling.setAll(heavy?1.17:runner?.88:1);
+ let skin=heavy?'zombie2':'zombie',shirt=runner?'rust':'zombieTop';
+ box('torso',heavy?1.28:1.02,1.16,.72,0,1.56,0,shirt,core);
+ let head=root('face',0,2.41,-.11,core);box('head',.78,.78,.76,0,0,0,skin,head);
+ box('eyes',.55,.12,.06,0,.02,-.42,'black',head);
+ let legs=[root('legL',-.25,.97,0,core),root('legR',.25,.97,0,core)];
+ for(let l of legs)box('leg',.4,.93,.44,0,-.44,0,'zombiePants',l);
+ let arms=[root('armL',-.67,2.07,-.20,core),root('armR',.67,2.07,-.20,core)];
+ for(let a of arms){a.rotation.x=-.75;box('arm',.35,.90,.36,0,-.42,0,skin,a)}
+ // Simple expressive face at the approved arcade scale.
+box('jaw',.41,.14,.07,0,-.25,-.425,'black',head);
+for(let sx of [-1,1])box('eyeWhite',.13,.13,.05,sx*.19,.07,-.438,'yellow',head);
+box('tornCollar',.55,.13,.77,0,2.09,-.06,'black',core);
+core.rotation.x=.06;
+ return {r,core,head,legs,arms,variant,hp:3,maxhp:3,phase:Math.random()*6.28,alive:true};
+}
+function makeBoss(){let r=root('boss',0,0,26),core=root('bossBody',0,0,0,r);r.scaling.setAll(1.47);let legs=[root('leftLeg',-.66,1.2,0,core),root('rightLeg',.66,1.2,0,core)];for(let l of legs){box('bossLeg',.94,1.48,.9,0,-.64,0,'bossArmor',l);box('bossBoot',1.06,.4,1.1,0,-1.44,-.14,'black',l)}box('hulkTorso',2.66,2.25,1.24,0,2.43,0,'bossSkin',core);box('armorChest',2.45,.88,.24,0,2.49,-.68,'bossArmor',core);box('belt',2.65,.35,1.28,0,1.53,0,'black',core);box('armorLeft',1.04,.65,1.15,-1.25,3.35,0,'bossArmor',core);box('armorRight',1.04,.65,1.15,1.25,3.35,0,'bossArmor',core);let head=root('bossHead',0,3.97,-.23,core);box('mutantHead',1.45,1.26,1.21,0,0,0,'bossSkin',head);box('brow',1.38,.24,.3,0,.14,-.61,'bossArmor',head);for(let s of [-1,1])box('glowingEye',.24,.22,.07,s*.38,.07,-.66,glowYellow,head);box('teeth',.70,.28,.09,0,-.37,-.65,'black',head);let arms=[root('leftArm',-1.68,3.25,0,core),root('rightArm',1.68,3.25,0,core)];for(let [i,a] of arms.entries()){a.rotation.z=i===0?-.17:.17;box('hugeArm',.94,1.85,1.0,0,-.84,0,'bossSkin',a);box('wristGuard',1.08,.68,1.11,0,-1.47,-.04,'bossArmor',a);box('fist',1.03,.69,1.0,0,-1.99,-.11,'bossSkin',a)}box('weakRing',.82,.82,.11,0,2.55,-.84,'yellow',core);box('weakCenter',.54,.54,.13,0,2.55,-.93,glowYellow,core);for(let s of [-1,1])box('spike',.23,.6,.32,s*1.16,3.76,.02,'metal',core);// Boss silhouette stays arcade-like: round plates and bright weak point.
+for(let sx of [-1,1]){ball('roundedShoulder',.92,sx*1.30,3.36,.04,'bossArmor',core);box('armorStud',.24,.25,.14,sx*1.27,3.44,-.61,'metal',core)}
+ball('weakCore',.48,0,2.55,-1.05,glowYellow,core);
+box('helmetCrest',1.25,.27,.91,0,4.57,-.17,'bossArmor',core);
+return {r,core,head,arms,legs,hp:180,maxhp:180,phase:0,alive:true}}
+let soldiers=[],zombies=[],shots=[],particles=[],boss=null,gameProps=[],gates=[],coins=0,kills=0,desiredX=0,elapsed=0,paused=false,modalOpen=false,gameOver=false,phase='waves',level=1,wave=1,waveClock=0,spawnTimer=0,fireTimer=0,gateTimer=0,hazardTimer=0,coinTimer=0,flashTime=0,scrollSpeed=4.35,weapon='rifle',fireBoost=0,damageBoost=0,shield=3,lastHealth=3,weaponTimer=0,bossTimer=0,chargeTimer=0,waveDuration=19,spawnCount=0,shotsFired=0,sound=false,gateSerial=0,gateChoiceLock=0;
+const $=id=>document.getElementById(id),rnd=(a,b)=>a+Math.random()*(b-a),clamp=(a,b,c)=>Math.max(b,Math.min(c,a));const roadDashes=scene.meshes.filter(m=>m.name==='laneDash');
+function flash(msg,t=1.2){$('flash').textContent=msg;$('flash').style.opacity='1';flashTime=t}
+function matText(name,txt,col){return textPlane(name,txt,col,3.2,1.2,0,1.67,-.07)}
+function openModal(title,detail,items){paused=true;modalOpen=true;$('modalTitle').textContent=title;$('modalText').textContent=detail;const ct=$('modalChoices');ct.innerHTML='';for(let opt of items){let b=document.createElement('button');b.textContent=opt.label;if(opt.full)b.className='full';b.onclick=()=>{if(!modalOpen)return;modalOpen=false;$('modal').hidden=true;opt.act();if(!gameOver)paused=false};ct.appendChild(b)}$('modal').hidden=false}
+function disposeGroup(arr){for(const a of arr){const o=a.r||a.m||a.group||a;if(o&&o.dispose)o.dispose()}arr.length=0}
+function resetWorld(){disposeGroup(zombies);disposeGroup(shots);disposeGroup(particles);disposeGroup(gameProps);disposeGroup(gates);if(boss){boss.r.dispose();boss=null}for(const s of soldiers)s.r.dispose();soldiers=[]}
+function spawnSoldier(){if(soldiers.length>=20)return;let s=makeSoldier('trooper'+Math.random(),0,-3,soldiers.length%3);soldiers.push(s);positionSquad(.01)}
+function positionSquad(dt){let n=soldiers.length;if(!n)return;let cols=Math.min(n,5);for(let i=0;i<n;i++){let row=Math.floor(i/cols),col=i%cols,span=Math.min(cols,n-row*cols);let x=desiredX+(col-(span-1)/2)*.77;let z=-3-row*.77;let s=soldiers[i];s.r.position.x+=(clamp(x,-4.35,4.35)-s.r.position.x)*Math.min(1,dt*9);s.r.position.z+=(z-s.r.position.z)*Math.min(1,dt*9)}}
+function removeSoldier(){if(soldiers.length>1){let s=soldiers.pop();emitParticle(s.r.position.x,1.4,s.r.position.z,'red',13);s.r.dispose();flash('SOLDATO PERSO!')}else if(soldiers.length){shield--;flash('SCUDO −1 · '+shield+' RIMASTI');emitParticle(desiredX,1.4,-3,'yellow',13);if(shield<=0)endGame()}}
+function endGame(){gameOver=true;paused=true;phase='lost';openModal('MISSIONE FALLITA','Sei arrivato al livello '+level+', ondata '+wave+'. Eliminazioni: '+kills+' · Monete: '+coins+'.',[{label:'RIPROVA',full:true,act:startRun}])}
+function hud(){ $('waveCount').textContent=phase==='boss'?'BOSS':wave+'/10';$('soldierCount').textContent=soldiers.length+' · 🛡'+shield;$('coins').textContent=coins;$('bosshealth').style.width=(boss?100*Math.max(0,boss.hp)/boss.maxhp:100)+'%';$('bossbar').style.display=phase==='boss'?'block':'none';$('bossname').style.display=phase==='boss'?'block':'none';}
+function startRun(){resetWorld();level=1;wave=1;coins=0;kills=0;shield=3;lastHealth=3;desiredX=0;elapsed=0;gameOver=false;phase='waves';weapon='rifle';fireBoost=0;damageBoost=0;spawnTimer=0;fireTimer=0;gateTimer=5;hazardTimer=7;coinTimer=9;waveClock=0;gateChoiceLock=0;for(let i=0;i<3;i++)spawnSoldier();hud();flash('ONDATA 1 / 10',1.5);$('hint').textContent='Allinea la squadra ai nemici · Attraversa le porte';}
+function emitParticle(x,y,z,c,count=7){for(let i=0;i<count;i++){let p=box('spark',.10,.10,.10,x,y,z,c);particles.push({m:p,v:new B.Vector3(rnd(-3.5,3.5),rnd(1,5),rnd(-3,3)),t:rnd(.25,.5),max:.5})}}
+const MAX_ACTIVE_ZOMBIES=60;
+function spawnZombie(zOverride,forced){
+ if(zombies.length>=MAX_ACTIVE_ZOMBIES)return;
+ let r=Math.random(),variant=forced||(r<.18?'runner':r<.32?'heavy':'normal');
+ let x=rnd(-4.1,4.1),z=makeHordeZombie('enemy'+Math.random(),x,zOverride??rnd(36,52),variant);
+ z.hp=2*((variant==='heavy'?5:variant==='runner'?2:3)+Math.floor((wave-1)/2)+(level-1)); // Double enemy HP; damage/weapon mechanics unchanged.
+ z.maxhp=z.hp;zombies.push(z)
+}
+function spawnHorde(){
+ // Gradual progression: small groups at the start; a visibly denser wave 10.
+ // The first seconds of every wave ramp up smoothly instead of appearing as a wall.
+ const progress=Math.min(1,waveClock/7);
+ const base=1+Math.floor((wave-1)/3);
+ const bonus=(wave>=4 && progress>.55 ? 1:0)+(wave>=8 && progress>.85?1:0);
+ const batch=Math.min(8,base+bonus+(level>1?Math.min(2,level-1):0));
+ for(let k=0;k<batch&&zombies.length<MAX_ACTIVE_ZOMBIES;k++)spawnZombie(rnd(36,54));
+}
+function spawnDoorPair(){if(gates.length||phase!=='waves')return;let options=[['+2 SOLDATI','recruit',2,'gategreen'],['+4 SOLDATI','recruit',4,'gategreen'],['×2 SOLDATI','multiply',2,'gategreen'],['+ DANNI','damage',.30,'gateblue'],['+ CADENZA','rate',.25,'gateblue'],['−1 SOLDATO','lose',1,'rust'],['+ MONETE','coins',6,'gateblue'],['− CADENZA','slow',.18,'rust']];let ia=Math.floor(Math.random()*options.length),ib=Math.floor(Math.random()*options.length);while(ib===ia)ib=Math.floor(Math.random()*options.length);let chosen=[options[ia],options[ib]];if(chosen.every(q=>q[1]==='lose'||q[1]==='slow'))chosen[1]=options[0];let pair=++gateSerial;for(let i=0;i<2;i++){let a=chosen[i],g=previewGate(i?2.52:-2.52,47,a[3],a[3]==='gategreen'?glowGreen:a[3]==='rust'?materials.rust:glowBlue,a[0]);g.scaling.set(.98,.92,1);g.metadata={};gates.push({r:g,pair,choice:i,x:i?2.52:-2.52,label:a[0],kind:a[1],val:a[2],triggered:false})}flash('SCEGLI UNA PORTA',.95)}
+function applyGate(g){if(g.kind==='recruit'){for(let k=0;k<g.val;k++)spawnSoldier()}if(g.kind==='multiply'){let cnt=Math.min(20-soldiers.length,soldiers.length);for(let k=0;k<cnt;k++)spawnSoldier()}if(g.kind==='damage')damageBoost+=g.val;if(g.kind==='rate')fireBoost+=g.val;if(g.kind==='coins')coins+=g.val;if(g.kind==='lose')removeSoldier();if(g.kind==='slow')fireBoost=Math.max(-.2,fireBoost-g.val);flash(g.label,1.4);gateChoiceLock=1.3;for(let h of gates){h.r.dispose()}gates=[];hud()}
+function spawnObstacle(){if(gameProps.filter(o=>o.type==='barrel'||o.type==='obstacle').length>8)return;let side=Math.random()<.5?-1:1,x=side*rnd(2.1,4),isBarrel=Math.random()<.59,z=rnd(43,48);let m=isBarrel?barrel(x,z):barrier(x,z);gameProps.push({r:m,type:isBarrel?'barrel':'obstacle',x,z,hp:isBarrel?2:1,dead:false})}
+function spawnCoin(){let x=rnd(-3.8,3.8),z=46;let r=root('pickupCoin',x,.55,z);cyl('gold',.66,.13,0,0,0,'yellow',r,14).rotation.x=Math.PI/2;ball('shine',.30,0,0,-.15,glowYellow,r);gameProps.push({r,type:'coin',x,z,dead:false,phase:0})}
+function explodeBarrel(o){if(o.dead)return;o.dead=true;emitParticle(o.r.position.x,1,o.r.position.z,'yellow',26);for(const z of zombies){if(z.alive&&B.Vector3.Distance(z.r.position,o.r.position)<5.6)hurtZombie(z,12)}if(boss&&boss.alive&&B.Vector3.Distance(boss.r.position,o.r.position)<6.4)hurtZombie(boss,18);for(const q of gameProps)if(q!==o&&q.type==='barrel'&&!q.dead&&B.Vector3.Distance(q.r.position,o.r.position)<3.6)explodeBarrel(q);flash('ESPLOSIONE!',.65);o.r.setEnabled(false)}
+function hurtZombie(z,dmg){if(!z.alive)return;z.hp-=dmg;emitParticle(z.r.position.x,z===boss?3.2:1.8,z.r.position.z,z===boss?'yellow':'zombie',2);if(z.hp<=0){z.alive=false;z.r.setEnabled(false);if(z===boss){coins+=25;kills++;flash('LO SFONDATORE SCONFITTO!',2);phase='victory';setTimeout(()=>{if(phase==='victory')finishLevel()},1200)}else{coins+=1;kills++}hud()}}
+function shootForward(s,angle=0){
+ // Projectile takes its straight trajectory from the soldier's position at fire time.
+ // No target acquisition and no trajectory changes after being fired.
+ let m=ball('round',.12,s.r.position.x+.2,1.75,s.r.position.z+.90,'yellow');
+ let dmg=(1+damageBoost)*(weapon==='shotgun'?.77:weapon==='machinegun'?.70:weapon==='piercing'?1.14:1);
+ shots.push({m,vx:Math.sin(angle)*39,vz:Math.cos(angle)*39,kind:'bullet',speed:39,damage:dmg,t:0,hit:new Set(),piercing:weapon==='piercing'});
+}
+
+function nextWave(){if(wave>=10){phase='transition';spawnTimer=0;flash('PREPARATI AL BOSS!',1.5);return}wave++;waveClock=0;spawnTimer=0;gateTimer=4;hazardTimer=6;flash('ONDATA '+wave+' / 10',1.5);hud()}
+function preBoss(){phase='loadout';disposeGroup(gates);openModal('SCEGLI UN’ARMA','Hai completato le 10 ondate! Scegli gratuitamente l’arma per affrontare Lo Sfondatore. La scelta dura fino alla fine del boss.',[
+{label:'FUCILE · EQUILIBRATO',act:()=>beginBoss('rifle')},{label:'FUCILE A POMPA · 3 COLPI',act:()=>beginBoss('shotgun')},{label:'MITRAGLIATRICE · RAPIDA',act:()=>beginBoss('machinegun')},{label:'PERFORANTE · POTENTE',act:()=>beginBoss('piercing')}])}
+function beginBoss(w){weapon=w;phase='boss';boss=makeBoss();boss.r.position.z=38;boss.hp=20*(130+35*(level-1));boss.maxhp=boss.hp; /* Boss HP exactly 20x Alpha 3. */boss.alive=true;bossTimer=0;chargeTimer=0;hud();flash('LO SFONDATORE!',2);$('hint').textContent='Boss: schiva le cariche! La sua corazza si apre dopo ogni carica.'}
+function finishLevel(){phase='shop';disposeGroup(zombies);disposeGroup(gameProps);if(boss){boss.r.dispose();boss=null}let carry=Math.max(1,Math.floor(soldiers.length*.25));openModal('LIVELLO '+level+' COMPLETATO','Hai sconfitto il boss! '+coins+' monete disponibili. Nel prossimo aggiornamento arriverà il negozio completo; per ora conservi le monete e riparti con '+carry+' soldati.',[{label:'LIVELLO SUCCESSIVO',full:true,act:()=>{for(let s of soldiers)s.r.dispose();soldiers=[];level++;wave=1;waveClock=0;spawnTimer=0;gateTimer=3;hazardTimer=6;coinTimer=9;phase='waves';weapon='rifle';damageBoost=0;fireBoost=0;shield=3;desiredX=0;for(let k=0;k<carry;k++)spawnSoldier();hud();flash('LIVELLO '+level,1.4);$('hint').textContent='Nuove ondate · Più zombie · Attraversa le porte'}}])}
+function animate(dt){elapsed+=dt;let spd=scrollSpeed*(1+Math.min(.4,(wave-1)*.043));if(phase==='waves'||phase==='transition'){for(const dash of roadDashes){dash.position.z-=spd*dt;if(dash.position.z<-18)dash.position.z+=101.4}}if(flashTime>0){flashTime-=dt;if(flashTime<=0)$('flash').style.opacity='0'}if(gateChoiceLock>0)gateChoiceLock-=dt;positionSquad(dt);
+for(let i=0;i<soldiers.length;i++){let s=soldiers[i],t=elapsed*9+i*.4;s.legL.rotation.x=Math.sin(t)*.19;s.legR.rotation.x=-Math.sin(t)*.19;s.body.position.y=Math.abs(Math.sin(t))*.06;s.armL.rotation.z=.05*Math.sin(t)}
+if(phase==='waves'){waveClock+=dt;spawnTimer+=dt;gateTimer+=dt;hazardTimer+=dt;coinTimer+=dt;let interval=Math.max(.78,1.5-(wave-1)*.075-(level-1)*.035);if(spawnTimer>interval){spawnTimer-=interval;spawnHorde()}if(gateTimer>15.5){gateTimer=0;spawnDoorPair()}if(hazardTimer>9.2){hazardTimer=0;spawnObstacle()}if(coinTimer>22){coinTimer=0;spawnCoin()}if(waveClock>=waveDuration){if(wave<10)nextWave();else{phase='transition';flash('ULTIMA ONDATA SUPERATA',1.5)}}}
+if(phase==='transition'){if(zombies.some(z=>z.alive)||gates.length||gameProps.some(x=>x.type==='obstacle'&&!x.dead)){// clear the last stragglers by continued movement
+}else preBoss()}
+if(phase==='boss'&&boss&&boss.alive){bossTimer+=dt;chargeTimer+=dt;boss.phase+=dt;boss.r.position.z-=dt*(chargeTimer>6.5&&chargeTimer<8.0?12:.35);boss.r.position.x+=(desiredX-boss.r.position.x)*Math.min(1,dt*(chargeTimer>6.5?3:.35));boss.core.position.y=Math.sin(bossTimer*3)*.08;for(let [i,a] of boss.arms.entries())a.rotation.z=(i===0?-.17:.17)+Math.sin(bossTimer*2+i)*.12;if(chargeTimer>9){chargeTimer=0;boss.r.position.z=29;flash('CARICA IN ARRIVO!',1.25)}if(chargeTimer>5.3&&chargeTimer<5.36)flash('SCHIVA! CARICA!',.9);if(boss.r.position.z<-1.5){if(Math.abs(boss.r.position.x-desiredX)<2.1&&gateChoiceLock<=0){removeSoldier();gateChoiceLock=1.2}boss.r.position.z=25;chargeTimer=0;flash('PUNTO DEBOLE ESPOSTO',1.3)}}
+let rate=(weapon==='machinegun'?.12:weapon==='shotgun'?.55:weapon==='piercing'?.47:.28)/(1+fireBoost);fireTimer+=dt;if(fireTimer>=rate){fireTimer=0;for(let s of soldiers){shootForward(s,0);if(weapon==='shotgun'){shootForward(s,-.11);shootForward(s,.11)}}}
+for(const z of zombies){if(!z.alive)continue;z.phase+=dt*(z.variant==='runner'?12:7);let speed=z.variant==='runner'?6.0:z.variant==='heavy'?2.25:3.7;speed*=1+Math.min(.45,(wave-1)*.05);z.r.position.z-=dt*speed;let track=Math.sin(z.phase*.12)*.12+(desiredX-z.r.position.x)*.08;z.r.position.x=clamp(z.r.position.x+track*dt,-4.3,4.3);z.core.position.y=Math.abs(Math.sin(z.phase))*.08;z.legs[0].rotation.x=Math.sin(z.phase)*.35;z.legs[1].rotation.x=-Math.sin(z.phase)*.35;z.arms[0].rotation.x=-1.1+Math.sin(z.phase)*.13;z.arms[1].rotation.x=-1.1-Math.sin(z.phase)*.13;if(z.r.position.z<-2.3){if(Math.abs(z.r.position.x-desiredX)<(soldiers.length>5?2.3:1.55)&&gateChoiceLock<=0){removeSoldier();gateChoiceLock=.45}z.alive=false;z.r.setEnabled(false)}if(z.r.position.z< -8){z.alive=false;z.r.setEnabled(false)}}
+for(let i=gates.length-1;i>=0;i--){let g=gates[i];g.r.position.z-=dt*spd;if(g.r.position.z<=-2.75&&gateChoiceLock<=0){let selected=desiredX<0?0:1;if(g.choice===selected){applyGate(g);break}}if(g.r.position.z< -9){g.r.dispose();gates.splice(i,1)}}
+for(const p of gameProps){if(p.dead)continue;p.r.position.z-=dt*spd;if(p.type==='coin'){p.phase+=dt;p.r.rotation.y+=dt*3;p.r.position.y=.60+Math.sin(p.phase*4)*.11}if(p.r.position.z<=-2.8){if(Math.abs(p.r.position.x-desiredX)<(p.type==='coin'?1.25:1.28)){if(p.type==='coin'){coins+=3;flash('+3 MONETE',.8);hud()}else if(p.type==='obstacle'&&gateChoiceLock<=0){removeSoldier();gateChoiceLock=.7}else if(p.type==='barrel')explodeBarrel(p)}p.dead=true;p.r.setEnabled(false)}if(p.r.position.z<-8){p.dead=true;p.r.setEnabled(false)}}
+for(let i=shots.length-1;i>=0;i--){
+ let p=shots[i],oldX=p.m.position.x,oldZ=p.m.position.z;
+ let newX=oldX+p.vx*dt,newZ=oldZ+p.vz*dt;
+ let best=null,bestZ=1e9;
+ // Swept forward collision: only targets in the actual projectile corridor can be hit.
+ // Barrels can also be shot, but no friendly fire.
+ const tryHit=(t,radius)=>{
+  if(!t||!t.r||t.dead||t.alive===false||!t.r.isEnabled()||p.hit.has(t))return;
+  let z=t.r.position.z;
+  if(z<oldZ-.40||z>newZ+.40)return;
+  let frac=(z-oldZ)/Math.max(.01,newZ-oldZ);
+  let atX=oldX+(newX-oldX)*clamp(frac,0,1);
+  if(Math.abs(atX-t.r.position.x)<=radius && z<bestZ){best=t;bestZ=z}
+ };
+ for(const z of zombies)tryHit(z,z.variant==='heavy'?.78:.53);
+ if(boss&&boss.alive)tryHit(boss,2.15);
+ for(const o of gameProps)if(o.type==='barrel'&&!o.dead)tryHit(o,.58);
+ if(best){
+  p.hit.add(best);
+  if(best.type==='barrel'){best.hp--;if(best.hp<=0)explodeBarrel(best)}
+  else hurtZombie(best,p.damage*(best===boss&&chargeTimer<2?1.55:1));
+  if(!p.piercing){p.m.dispose();shots.splice(i,1);continue}
+ }
+ p.m.position.x=newX;p.m.position.z=newZ;
+ if(newZ>75){p.m.dispose();shots.splice(i,1)}
+}
+
+for(let i=particles.length-1;i>=0;i--){let p=particles[i];p.t-=dt;p.m.position.addInPlace(p.v.scale(dt));p.v.y-=dt*12;p.m.scaling.setAll(Math.max(.05,p.t/p.max));if(p.t<=0){p.m.dispose();particles.splice(i,1)}}
+for(let i=zombies.length-1;i>=0;i--)if(!zombies[i].alive){zombies[i].r.dispose();zombies.splice(i,1)}for(let i=gameProps.length-1;i>=0;i--)if(gameProps[i].dead){gameProps[i].r.dispose();gameProps.splice(i,1)}hud();}
+$('pauseBtn').onclick=()=>{if(modalOpen||gameOver)return;paused=!paused;$('pauseBtn').textContent=paused?'RIPRENDI':'PAUSA';if(paused)flash('PAUSA',5);else flash('RIPRENDI',.6)};
+$('restartBtn').onclick=()=>openModal('RICOMINCIARE?','La partita attuale verrà azzerata, comprese monete e progressi.',[{label:'ANNULLA',act:()=>{}},{label:'RICOMINCIA',act:startRun}]);
+$('skipBtn').onclick=()=>{if(modalOpen||gameOver)return;disposeGroup(zombies);disposeGroup(gates);disposeGroup(gameProps);wave=10;phase='transition';hud();flash('TEST BOSS',.7)};
+let touching=false;function movePointer(e){let rect=canvas.getBoundingClientRect();desiredX=clamp(((e.clientX-rect.left)/rect.width-.5)*10.6,-3.8,3.8)}canvas.addEventListener('pointerdown',e=>{touching=true;canvas.setPointerCapture(e.pointerId);movePointer(e)});canvas.addEventListener('pointermove',e=>{if(touching)movePointer(e)});canvas.addEventListener('pointerup',()=>touching=false);canvas.addEventListener('pointercancel',()=>touching=false);
+window.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key.toLowerCase()==='a')desiredX=clamp(desiredX-.65,-3.8,3.8);if(e.key==='ArrowRight'||e.key.toLowerCase()==='d')desiredX=clamp(desiredX+.65,-3.8,3.8);if(e.key==='Escape'&&!modalOpen)$('pauseBtn').click()});
+startRun();document.getElementById('bootStatus').textContent='Partita avviata';
+let fpsClock=0,frames=0;
+engine.runRenderLoop(()=>{try{
+ let dt=Math.min(.045,engine.getDeltaTime()/1000);
+ if(!paused&&!modalOpen&&!gameOver)animate(dt);
+ scene.render();frames++;
+ if(frames===1)document.getElementById('bootStatus').textContent='Scena visibile';
+ fpsClock+=dt;
+ if(fpsClock>.5){fpsClock=0;$('fps').innerHTML='FPS: <b>'+Math.round(engine.getFps())+'</b>'}
+}catch(err){let p=document.getElementById('error');p.style.display='block';p.textContent='Errore durante la partita: '+String(err&&err.message||err);console.error(err);paused=true}});addEventListener('resize',()=>engine.resize());document.addEventListener('visibilitychange',()=>{if(document.hidden&&!modalOpen){paused=true;$('pauseBtn').textContent='RIPRENDI'}});
+
+})()
+</script></body></html>
